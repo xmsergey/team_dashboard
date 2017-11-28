@@ -1,0 +1,29 @@
+<%= form_tag({}) do %>
+  <div class="filter-block">
+
+  <h3><%= l(:label_team_management)%></h3>
+  <ul>
+    <li><%= link_to l(:label_edit_teams), team_management_path %></li>
+  </ul>
+  <h3><%= l(:label_filter)%></h3>
+  <ul>
+    <li>
+      <label for='team'><%= l(:label_team) %></label><br />
+      <%= select_tag 'team', options_for_select(@teams.invert.to_a, @selected_team) %>
+    </li>
+    <% if false && @technical_owners.present? %>
+      <li>
+        <label for='technical_owner'><%= l(:label_technical_owner) %></label><br />
+        <%= select_tag 'technical_owner', options_for_select(@technical_owners, @selected_technical_owner) %>
+      </li>
+    <% end %>
+    <li>
+      <label for='target_version'><%= l(:label_target_version) %></label><br />
+      <%= select_tag 'target_version', version_options_for_select(@versions, @selected_version_id) %>
+    </li>
+  </ul>
+  <p>
+    <%= submit_tag l(:button_apply) %>
+  </p>
+  </div>
+<% end %>

@@ -1,0 +1,10 @@
+# English strings go here for Rails i18n
+en:
+  label_team_dashboard: "Team Dashboard"
+  label_team: "Team:"
+  label_technical_owner: "Technical owner:"
+  label_status_ticket_is_open: "Status of ticket is open:"
+  label_target_version: "Target Version:"
+  label_filter: "Filter"
+  label_team_management: "Teams Management"
+  label_edit_teams: "Edit teams"

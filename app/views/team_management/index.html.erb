@@ -1,0 +1,45 @@
+<% html_title 'Team Management' %>
+
+<div class='wiki wiki-page'>
+  <h1>Teams Management</h1>
+</div>
+
+<%= form_tag(@project ? team_management_update_path(@project) : team_management_update_path, onsubmit: 'make_selects_send_to_server()') do %>
+  <table class="query-columns">
+    <% @teams.each_with_index  do |(team_key, users), index| %>
+        <% team_control_id = "team_#{team_key}" %>
+        <td>
+          <td style="padding-left:0">
+            <%= label_tag team_control_id, "#{@teams_available[team_key]}" %>
+            <br />
+            <%= select_tag "team_#{team_key}",
+                           options_for_select(users.map { |u| [u.name, u.id] } || []),
+                           id: team_control_id, multiple: true, size: 10, style: 'width:250px' %>
+          </td>
+          <td class="buttons">
+            <input type="button" value="&#8594;" onclick="moveOptions('#<%= "#{team_control_id}" %>', '#available_users');" />
+            <br />
+            <input type="button" value="&#8592;" onclick="moveOptions('#available_users', '#<%= "#{team_control_id}" %>');" />
+          </td>
+          <% if index == 0 %>
+            <td rowspan="<%= @teams.count %>">
+              <%= label_tag 'available_users', 'Available Users' %>
+              <br />
+              <%= select_tag 'available_users',
+                             options_for_select(@unselected_users.map { |u| [u.name, u.id] } || []),
+                             id: 'available_users', multiple: true, size: (12 * @teams.count), style: 'width:250px' %>
+            </td>
+          <% end %>
+        </tr>
+    <% end %>
+  </table>
+  <%= submit_tag l(:button_save) %>
+  <%= link_to 'Back', controller: 'dashboard', action: 'index', project_id: params[:project_id] %>
+<% end %>
+
+<script>
+    function make_selects_send_to_server() {
+      $("select[name^='team_'] option").prop('selected', true);
+      return false;
+    }
+</script>

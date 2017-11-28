@@ -1,0 +1,24 @@
+<% html_title l(:label_team_dashboard) %>
+<h2><%= l(:label_team_dashboard) %></h2>
+
+<% content_for :sidebar do %>
+  <%= render partial: 'sidebar' %>
+<% end %>
+
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'team-dashboard', plugin: 'team-dashboard' %>
+  <%= javascript_include_tag 'team-dashboard', plugin: 'team-dashboard' %>
+<% end %>
+
+<div class="grid">
+  <div class="col-1-1">
+    <%= render partial: 'grid', locals: {
+        users: @users,
+        title: '',
+        display_priority: true,
+        display_shared_mark: true,
+        display_eta: true,
+        display_initials: true
+    } %>
+  </div>
+</div>

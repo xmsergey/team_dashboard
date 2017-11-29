@@ -28,8 +28,10 @@ class DashboardController < ApplicationController
 
     user = User.find_by_id(params[:id])
     image = params[:file].tempfile
-    path = "plugins/team-dashboard/assets/images/avatars/#{"#{user.firstname}_#{user.lastname}.jpg".downcase}"
-    path_assets_redmine = "public/plugin_assets/team-dashboard/images/avatars/#{"#{user.firstname}_#{user.lastname}.jpg".downcase}"
+
+    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
+    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
+
     File.open(path, 'wb') do |f|
       f.write(image.read)
     end
@@ -45,8 +47,9 @@ class DashboardController < ApplicationController
     self.ajax_action = true
 
     user = User.find_by_id(params[:user_id])
-    path = "plugins/team-dashboard/assets/images/avatars/#{ "#{user.firstname}_#{user.lastname}.jpg".downcase}"
-    path_assets_redmine = "public/plugin_assets/team-dashboard/images/avatars/#{"#{user.firstname}_#{user.lastname}.jpg".downcase}"
+
+    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
+    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
     return unless File.exist? path
 
     File.delete(path)
@@ -56,6 +59,14 @@ class DashboardController < ApplicationController
   end
 
   private
+
+  def get_dir_plugin_assets
+    Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).assets_directory
+  end
+
+  def get_dir_public_assets
+    Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).public_directory
+  end
 
   def find_project
     # @project variable must be set before calling the authorize filter

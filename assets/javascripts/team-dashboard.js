@@ -12,12 +12,22 @@ $(function() {
   });
 });
 
-function sendAvatar(id){
-  var avatar_popup = $('#avatar_popup');
+function clearImage() {
+  var id = $('#hidden_input').val();
   var img = new Image();
-  img.src = $('#avatar_'+id).attr('src');
+  img.src = $('#avatar_' + id).attr('src');
   $('#target').html(img);
   $('#pictureForm')[0].reset();
+}
+
+function sendAvatar(id){
+  var avatar_popup = $('#avatar_popup');
+
+  var img = new Image();
+  img.src = $('#avatar_' + id).attr('src');
+  $('#target').html(img);
+  $('#pictureForm')[0].reset();
+  $('#hidden_input').val(id);
 
   avatar_popup.dialog({
     dialogClass: 'ticket-ui-dialog',
@@ -30,14 +40,16 @@ function sendAvatar(id){
     closable: true,
     buttons: {
       'Remove photo': function(){
-        $.ajax({
-          method: 'POST',
-          url: 'team_dashboard/remove_image',
-          data: { user_id: id }
-        }).done(function(){
-          avatar_popup.dialog('destroy');
-          location.reload();
-        });
+        if (confirm('Are you sure?')){
+          $.ajax({
+            method: 'POST',
+            url: 'team_dashboard/remove_image',
+            data: { user_id: id }
+          }).done(function(){
+            avatar_popup.dialog('destroy');
+            location.reload();
+          });
+        }
       },
       Save: function () {
         var formData = new FormData();

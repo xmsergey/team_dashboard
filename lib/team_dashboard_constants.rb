@@ -9,5 +9,7 @@ module TeamDashboardConstants
   QA_SPECIALIST_FIELD_NAME = 'QA Specialist'.freeze
 
   QA_TEAM_NAMES = ['QA members'].freeze
+
+  PLUGIN_NAME = 'team-dashboard'.freeze
 end
 

@@ -1,4 +1,4 @@
-$(function() {
+$(function(){
   $('#pictureInput').on('change', function(event) {
     var files = event.target.files;
     var image = files[0];
@@ -12,7 +12,7 @@ $(function() {
   });
 });
 
-function clearImage() {
+function clearImage(){
   var id = $('#hidden_input').val();
   var img = new Image();
   img.src = $('#avatar_' + id).attr('src');
@@ -40,18 +40,28 @@ function sendAvatar(id){
     closable: true,
     buttons: {
       'Remove photo': function(){
+        avatar_popup.parent().css('z-index', 1);
         if (confirm('Are you sure?')){
           $.ajax({
             method: 'POST',
             url: 'team_dashboard/remove_image',
             data: { user_id: id }
-          }).done(function(){
+          }).done(function(response){
+            if (response.error_messages !== undefined && response.error_messages !== ""){
+              alert(response.error_messages);
+              $('#avatar_popup').parent().css('z-index', 999);
+            }else{
+              avatar_popup.dialog('destroy');
+              location.reload();
+            }
+          }).fail(function(response){
             avatar_popup.dialog('destroy');
             location.reload();
           });
         }
       },
-      Save: function () {
+      Save: function(){
+        avatar_popup.parent().css('z-index', 1);
         var formData = new FormData();
         formData.append('file', $('#pictureInput').prop("files")[0]);
         formData.append('id', id);
@@ -61,12 +71,20 @@ function sendAvatar(id){
           data: formData,
           processData: false,
           contentType: false
-        }).done(function(){
+        }).done(function(response){
+          if (response.error_messages !== undefined && response.error_messages !== ""){
+            $('#avatar_popup').parent().css('z-index', 999);
+            alert(response.error_messages);
+          }else{
+            avatar_popup.dialog('destroy');
+            location.reload();
+          }
+        }).fail(function(response){
           avatar_popup.dialog('destroy');
           location.reload();
         })
       },
-      Close: function () {
+      Close: function(){
         avatar_popup.dialog('destroy');
       }
     }

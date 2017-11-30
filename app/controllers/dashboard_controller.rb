@@ -24,10 +24,9 @@ class DashboardController < ApplicationController
   end
 
   def upload_image
-    self.ajax_action = true
-
     user = User.find_by_id(params[:id])
-    image = params[:file].tempfile
+    image = params[:file].try(:tempfile)
+    return unless image
 
     path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
     path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
@@ -44,13 +43,11 @@ class DashboardController < ApplicationController
   end
 
   def remove_image
-    self.ajax_action = true
-
     user = User.find_by_id(params[:user_id])
 
     path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
     path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
-    return unless File.exist? path
+    return render json: {error_messages: 'File exist' } unless File.exist? path
 
     File.delete(path)
     File.delete(path_assets_redmine)
@@ -66,6 +63,10 @@ class DashboardController < ApplicationController
 
   def get_dir_public_assets
     Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).public_directory
+  end
+
+  def get_avatar_path(user)
+    "avatars/#{"#{user.firstname}_#{user.lastname}.jpg".downcase}"
   end
 
   def find_project

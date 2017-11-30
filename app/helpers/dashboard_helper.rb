@@ -5,6 +5,7 @@ module DashboardHelper
     return nil unless plugin
 
     path_to_avatar = "#{File.join(plugin.assets_directory, 'images/')}#{avatar_path(user)}"
+
     if File.exist?(path_to_avatar)
       avatar_path(user)
     else

@@ -17,7 +17,7 @@ class TeamManagement < ActiveRecord::Base
   end
 
   def self.available_teams
-    team_field = CustomField.where(name: TeamDashboardConstants::TEAM_FIELD_NAME).first
+    team_field = CustomField.where(name: Setting.plugin_team_dashboard['team_field_name']).first
     teams = team_field.present? ? team_field.possible_values_options : []
 
     ret_val = {}
@@ -35,9 +35,5 @@ class TeamManagement < ActiveRecord::Base
 
   def self.team(name)
     self.where(team_name: name)
-  end
-
-  def qa_members
-    team(TeamDashboardConstants::QA_TEAM_NAMES)
   end
 end

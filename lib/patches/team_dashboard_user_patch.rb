@@ -16,8 +16,8 @@ module TeamDashboard
 
     module InstanceMethods
 
-      def is_qa_member?
-        User.in_team(TeamDashboardConstants::QA_TEAM_NAMES).where(id: self.id).exists?
+      def is_qa_member?(qa_owner_field)
+        qa_owner_field&.possible_values&.detect { |value| value.include?(self.name) }.present?
       end
 
       def estimated_hours(type = :total)

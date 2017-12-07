@@ -10,12 +10,13 @@
             </div>
             <div class="col-desc">
               <table class="user-issues" cellpadding="0" cellspacing="0">
+                <% issues = user_issues(user) %>
                 <tr>
-                  <td class="user-name" colspan="3">
+                  <td class="user-name">
                     <strong><%= link_to user.name, user_path(user) %></strong>
                   </td>
+                  <td class="shaded-font story-points" colspan="2" nowrap>Story Points: <%= story_points(issues) %></td>
                 </tr>
-                <% issues = user_issues(user) %>
                 <% issues.each_with_index do |issue, index| %>
                   <tr>
                     <% if index + 1 < TeamDashboardConstants::ISSUES_PER_CARD || issues.count == TeamDashboardConstants::ISSUES_PER_CARD %>

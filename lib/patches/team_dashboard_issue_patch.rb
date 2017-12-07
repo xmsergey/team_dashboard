@@ -14,7 +14,7 @@ module TeamDashboard
       end
 
       def technical_owner_field
-        issue_value_by_field_name(TeamDashboardConstants::TECHNICAL_OWNER_FIELD_NAME)
+        issue_value_by_field_name(Setting.plugin_team_dashboard['technical_owner_field_name'])
       end
 
       def qa_specialist_value
@@ -24,7 +24,7 @@ module TeamDashboard
       end
 
       def qa_specialist_field
-        issue_value_by_field_name(TeamDashboardConstants::QA_SPECIALIST_FIELD_NAME)
+        issue_value_by_field_name(Setting.plugin_team_dashboard['qa_owner_field_name'])
       end
 
       def remaining_hours

@@ -1,0 +1,16 @@
+<fieldset class="box">
+  <legend><strong>Custom Fields Names</strong></legend>
+  Change these values if related Custom Fields names would be changed.
+  <p>
+    <%= label_tag 'team_field_name', 'Team Field Name:' %>
+    <%= text_field_tag('settings[team_field_name]', settings[:team_field_name]) %>
+  </p>
+  <p>
+    <%= label_tag 'technical_owner_field_name', 'Technical Owner Field Name:' %>
+    <%= text_field_tag('settings[technical_owner_field_name]', settings[:technical_owner_field_name]) %>
+  </p>
+  <p>
+    <%= label_tag 'qa_owner_field_name', 'QA Owner Field Name:' %>
+    <%= text_field_tag('settings[qa_owner_field_name]', settings[:qa_owner_field_name]) %>
+  </p>
+</fieldset>

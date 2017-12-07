@@ -142,6 +142,10 @@
     color: #999;
 }
 
+.story-points {
+  text-align: right;
+}
+
 span.disabled-font,
 a.disabled-font {
     color: #AAA;

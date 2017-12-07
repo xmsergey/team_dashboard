@@ -1,7 +1,7 @@
 require_dependency 'patches/team_dashboard_issue_patch'
 require_dependency 'patches/team_dashboard_user_patch'
 
-Redmine::Plugin.register :'team-dashboard' do
+Redmine::Plugin.register :team_dashboard do
   name 'Team Dashboard plugin'
   author 'BelTech'
   description 'This is a plugin for Redmine'
@@ -13,4 +13,5 @@ Redmine::Plugin.register :'team-dashboard' do
   permission :team_management, { team_management: [:index, :update] }
 
   menu :project_menu, :dashboard, { controller: 'dashboard', action: 'index' }, caption: 'Team Dashboard', :after => :activity, :param => :project_id
+  settings default: {}, partial: 'settings/params_settings'
 end

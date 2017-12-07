@@ -34,7 +34,7 @@ module DashboardHelper
   end
 
   def owner_value(user, issue)
-    user.is_qa_member? ? issue.qa_specialist_value : issue.technical_owner_value
+    user.is_qa_member?(@qa_owner_field) ? issue.qa_specialist_value : issue.technical_owner_value
   end
 
   def priority_class(issue)
@@ -89,12 +89,18 @@ module DashboardHelper
   end
 
   def user_issues(user)
-    owner_field = user.is_qa_member? ? @qa_owner_field : @technical_owner_field
+    owner_field = user.is_qa_member?(@qa_owner_field) ? @qa_owner_field : @technical_owner_field
 
     value = owner_field.field_format == 'user' ? user.id : user.name
+
     Issue.visible
       .joins("INNER JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue' and custom_field_id = #{owner_field.id} AND value = '#{value}'")
+      .joins('LEFT JOIN agile_data ad on ad.issue_id = issues.id')
       .where(fixed_version_id: @selected_version_id)
+  end
+
+  def story_points(issues)
+    issues.sum(:story_points)
   end
 
 end

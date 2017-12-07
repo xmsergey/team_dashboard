@@ -9,8 +9,8 @@ class DashboardController < ApplicationController
     reset_session if request.get?
     save_to_session(params, request.post?)
 
-    @technical_owner_field = CustomField.where(name: TeamDashboardConstants::TECHNICAL_OWNER_FIELD_NAME).first
-    @qa_owner_field = CustomField.where(name: TeamDashboardConstants::QA_SPECIALIST_FIELD_NAME).first
+    @technical_owner_field = CustomField.where(name: Setting.plugin_team_dashboard['technical_owner_field_name']).first
+    @qa_owner_field = CustomField.where(name: Setting.plugin_team_dashboard['qa_owner_field_name']).first
 
     @teams = TeamManagement.available_teams
     @selected_team = session_params(:team, @teams.keys.first)

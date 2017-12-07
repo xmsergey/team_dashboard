@@ -17,7 +17,8 @@ module TeamDashboard
     module InstanceMethods
 
       def is_qa_member?(qa_owner_field)
-        qa_owner_field&.possible_values&.detect { |value| value.include?(self.name) }.present?
+        values = qa_owner_field && qa_owner_field.possible_values
+        values && values.detect { |value| value.include?(self.name) }.present?
       end
 
       def estimated_hours(type = :total)

@@ -12,6 +12,7 @@ class SetDefaultPluginSettingValues < ActiveRecord::Migration
   end
 
   def down
-    Setting.find_by(name: PLUGIN_NAME)&.destroy
+    setting = Setting.find_by(name: PLUGIN_NAME)
+    setting && setting.destroy
   end
 end

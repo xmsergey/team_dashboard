@@ -4,17 +4,17 @@ module DashboardHelper
     plugin = Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME) rescue nil
     return nil unless plugin
 
-    path_to_avatar = "#{File.join(plugin.assets_directory, 'images/')}#{avatar_path(user)}"
+    path_to_avatar = "#{File.join(plugin.assets_directory, 'images/')}#{avatar_path(user, plugin.assets_directory)}"
 
     if File.exist?(path_to_avatar)
-      avatar_path(user)
+      avatar_path(user, plugin.assets_directory)
     else
       'avatars/default.png'
     end
   end
 
-  def avatar_path(user)
-    "avatars/#{user.photo_file_name}"
+  def avatar_path(user, assets_path)
+    "avatars/#{user.photo_file_name(assets_path)}"
   end
 
   def eta_value(issue)

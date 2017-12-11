@@ -28,8 +28,9 @@ class DashboardController < ApplicationController
     image = params[:file].try(:tempfile)
     return unless image
 
-    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
-    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
+    image_extension = File.extname(image)
+    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user, image_extension)}"
+    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user, image_extension)}"
 
     File.open(path, 'wb') do |f|
       f.write(image.read)
@@ -45,8 +46,11 @@ class DashboardController < ApplicationController
   def remove_image
     user = User.find_by_id(params[:user_id])
 
-    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
-    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
+    plugin_assets = get_dir_plugin_assets
+    public_assets = get_dir_public_assets
+
+    path = "#{plugin_assets}/images/#{get_avatar_path(user, nil, plugin_assets)}"
+    path_assets_redmine = "#{public_assets}/images/#{get_avatar_path(user, nil, public_assets)}"
     return render json: {error_messages: 'File exist' } unless File.exist? path
 
     File.delete(path)
@@ -65,8 +69,25 @@ class DashboardController < ApplicationController
     Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).public_directory
   end
 
-  def get_avatar_path(user)
-    "avatars/#{"#{user.firstname}_#{user.lastname}.jpg".downcase}"
+  def get_avatar_path(user, extension = nil, assets_path = '')
+    path = "avatars/#{"#{user.firstname}_#{user.lastname}".downcase}"
+
+    extension = get_image_extension(assets_path, path) unless extension
+
+    path + extension
+  end
+
+  def get_image_extension(assets_path, path)
+    extension = nil
+
+    TeamDashboardConstants::ALLOWED_IMAGE_EXTENSIONS.each do |ext|
+      if File.exist?("#{assets_path}/images/#{path + ext}")
+        extension = ext
+        break
+      end
+    end
+
+    extension
   end
 
   def find_project

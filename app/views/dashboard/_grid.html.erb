@@ -6,7 +6,7 @@
         <div class="<%= module_class %>">
           <div class="grid">
             <div class="col-avatar">
-              <%= image_tag(get_avatar(user), plugin: 'team-dashboard', id: "avatar_#{user.id}", class: 'avatar', title: "#{user.name}", size: '60x60', onclick: "sendAvatar(#{user.id})")%>
+              <%= image_tag(get_avatar(user), plugin: 'team_dashboard', id: "avatar_#{user.id}", class: 'avatar', title: "#{user.name}", size: '60x60', onclick: "sendAvatar(#{user.id})")%>
             </div>
             <div class="col-desc">
               <table class="user-issues" cellpadding="0" cellspacing="0">
@@ -50,7 +50,7 @@
 
   <div id="avatar_popup" style="display: none;">
     <form id="pictureForm">
-      <p style="text-align: center"><input type="file" id="pictureInput" accept="image/jpeg" ></p>
+      <p style="text-align: center"><input type="file" id="pictureInput" accept="image/jpeg, image/png" ></p>
     </form>
     <a id="clear_image" href="#" class="clear_image" title="Clear Image" onclick="clearImage()"></a>
     <input type="hidden" id="hidden_input" value="">

@@ -60,8 +60,17 @@ module TeamDashboard
         self.issues + self.shared_issues
       end
 
-      def photo_file_name
-        "#{self.firstname}_#{self.lastname}.jpg".downcase
+      def photo_file_name(assets_path = '')
+        path = "#{self.firstname}_#{self.lastname}".downcase
+
+        TeamDashboardConstants::ALLOWED_IMAGE_EXTENSIONS.each do |ext|
+          if File.exist?("#{assets_path}/images/avatars/#{path + ext}")
+            path += ext
+            break
+          end
+        end
+
+        path
       end
 
       def today_report

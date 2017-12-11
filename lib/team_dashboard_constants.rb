@@ -3,5 +3,5 @@ module TeamDashboardConstants
   USER_TYPE_NAME = 'User'.freeze
   ISSUES_PER_CARD = 4.freeze
   PLUGIN_NAME = 'team_dashboard'.freeze
-  ALLOWED_IMAGE_EXTENSIONS = %w[.jpeg .jpg .png].freeze
+  ALLOWED_IMAGE_EXTENSIONS = %w[.jpg .jpeg .png].freeze
 end

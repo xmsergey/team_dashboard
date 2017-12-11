@@ -77,7 +77,7 @@ class DashboardController < ApplicationController
   def get_avatar_path(user, extension = nil, assets_path = '')
     path = "avatars/#{"#{user.firstname}_#{user.lastname}".downcase}"
 
-    extension = get_image_extension(assets_path, path) unless extension
+    extension = get_image_extension(assets_path, path) || '.jpg'
 
     path + extension
   end

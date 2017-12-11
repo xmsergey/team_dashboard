@@ -28,6 +28,8 @@ class DashboardController < ApplicationController
     image = params[:file].try(:tempfile)
     return unless image
 
+    remove_image_for_user(user)
+
     image_extension = File.extname(image)
     path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user, image_extension)}"
     path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user, image_extension)}"
@@ -46,20 +48,23 @@ class DashboardController < ApplicationController
   def remove_image
     user = User.find_by_id(params[:user_id])
 
-    plugin_assets = get_dir_plugin_assets
-    public_assets = get_dir_public_assets
-
-    path = "#{plugin_assets}/images/#{get_avatar_path(user, nil, plugin_assets)}"
-    path_assets_redmine = "#{public_assets}/images/#{get_avatar_path(user, nil, public_assets)}"
-    return render json: {error_messages: 'File exist' } unless File.exist? path
-
-    File.delete(path)
-    File.delete(path_assets_redmine)
+    remove_image_for_user(user)
 
     redirect_to action: :index
   end
 
   private
+
+  def remove_image_for_user(user)
+    plugin_assets = get_dir_plugin_assets
+    public_assets = get_dir_public_assets
+
+    path = "#{plugin_assets}/images/#{get_avatar_path(user, nil, plugin_assets)}"
+    path_assets_redmine = "#{public_assets}/images/#{get_avatar_path(user, nil, public_assets)}"
+
+    File.delete(path) if File.exist?(path)
+    File.delete(path_assets_redmine) if File.exist?(path_assets_redmine)
+  end
 
   def get_dir_plugin_assets
     Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).assets_directory

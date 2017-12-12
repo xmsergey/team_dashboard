@@ -30,9 +30,8 @@ class DashboardController < ApplicationController
 
     remove_image_for_user(user)
 
-    image_extension = File.extname(image)
-    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user, image_extension)}"
-    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user, image_extension)}"
+    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
+    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
 
     File.open(path, 'wb') do |f|
       f.write(image.read)
@@ -41,16 +40,12 @@ class DashboardController < ApplicationController
     image.read
 
     FileUtils.cp(path, path_assets_redmine)
-
-    redirect_to action: :index
   end
 
   def remove_image
     user = User.find_by_id(params[:user_id])
 
     remove_image_for_user(user)
-
-    redirect_to action: :index
   end
 
   private
@@ -59,8 +54,8 @@ class DashboardController < ApplicationController
     plugin_assets = get_dir_plugin_assets
     public_assets = get_dir_public_assets
 
-    path = "#{plugin_assets}/images/#{get_avatar_path(user, nil, plugin_assets)}"
-    path_assets_redmine = "#{public_assets}/images/#{get_avatar_path(user, nil, public_assets)}"
+    path = "#{plugin_assets}/images/#{get_avatar_path(user, plugin_assets)}"
+    path_assets_redmine = "#{public_assets}/images/#{get_avatar_path(user, public_assets)}"
 
     File.delete(path) if File.exist?(path)
     File.delete(path_assets_redmine) if File.exist?(path_assets_redmine)
@@ -74,7 +69,7 @@ class DashboardController < ApplicationController
     Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).public_directory
   end
 
-  def get_avatar_path(user, extension = nil, assets_path = '')
+  def get_avatar_path(user, assets_path = '')
     path = "avatars/#{"#{user.firstname}_#{user.lastname}".downcase}"
 
     extension = get_image_extension(assets_path, path) || '.jpg'

@@ -52,11 +52,11 @@ function sendAvatar(id){
               $('#avatar_popup').parent().css('z-index', 999);
             }else{
               avatar_popup.dialog('destroy');
-              location.reload();
+              window.location = window.location;
             }
           }).fail(function(response){
             avatar_popup.dialog('destroy');
-            location.reload();
+            window.location = window.location;
           });
         }
       },
@@ -77,11 +77,11 @@ function sendAvatar(id){
             alert(response.error_messages);
           }else{
             avatar_popup.dialog('destroy');
-            location.reload();
+            window.location = window.location;
           }
         }).fail(function(response){
           avatar_popup.dialog('destroy');
-          location.reload();
+          window.location = window.location;
         })
       },
       Close: function(){

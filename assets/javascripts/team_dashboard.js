@@ -24,7 +24,8 @@ function sendAvatar(id){
   var avatar_popup = $('#avatar_popup');
 
   var img = new Image();
-  img.src = $('#avatar_' + id).attr('src');
+  var avatar = $('#avatar_' + id);
+  img.src = avatar.attr('src');
   $('#target').html(img);
   $('#pictureForm')[0].reset();
   $('#hidden_input').val(id);
@@ -51,12 +52,11 @@ function sendAvatar(id){
               alert(response.error_messages);
               $('#avatar_popup').parent().css('z-index', 999);
             }else{
+              avatar.parent().html(response);
               avatar_popup.dialog('destroy');
-              window.location = window.location;
             }
           }).fail(function(response){
             avatar_popup.dialog('destroy');
-            window.location = window.location;
           });
         }
       },
@@ -76,12 +76,11 @@ function sendAvatar(id){
             $('#avatar_popup').parent().css('z-index', 999);
             alert(response.error_messages);
           }else{
+            avatar.parent().html(response);
             avatar_popup.dialog('destroy');
-            window.location = window.location;
           }
         }).fail(function(response){
           avatar_popup.dialog('destroy');
-          window.location = window.location;
         })
       },
       Close: function(){

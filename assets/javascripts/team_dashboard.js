@@ -15,8 +15,7 @@ $(function(){
 function clearImage(){
   var id = $('#hidden_input').val();
   var img = new Image();
-  img.src = $('#avatar_' + id).attr('src');
-  $('#target').html(img);
+  removePhoto(id, img);
   $('#pictureForm')[0].reset();
 }
 
@@ -43,21 +42,8 @@ function sendAvatar(id){
       'Remove photo': function(){
         avatar_popup.parent().css('z-index', 1);
         if (confirm('Are you sure?')){
-          $.ajax({
-            method: 'POST',
-            url: 'team_dashboard/remove_image',
-            data: { user_id: id }
-          }).done(function(response){
-            if (response.error_messages !== undefined && response.error_messages !== ""){
-              alert(response.error_messages);
-              $('#avatar_popup').parent().css('z-index', 999);
-            }else{
-              avatar.parent().html(response);
-              avatar_popup.dialog('destroy');
-            }
-          }).fail(function(response){
-            avatar_popup.dialog('destroy');
-          });
+          removePhoto(id, img);
+          avatar_popup.dialog('destroy');
         }
       },
       Save: function(){
@@ -88,4 +74,21 @@ function sendAvatar(id){
       }
     }
   }).dialog('open');
+}
+
+function removePhoto(id, img) {
+  $.ajax({
+    method: 'POST',
+    url: 'team_dashboard/remove_image',
+    data: { user_id: id }
+  }).done(function(response){
+    if (response.error_messages !== undefined && response.error_messages !== ""){
+      alert(response.error_messages);
+      $('#avatar_popup').parent().css('z-index', 999);
+    }else{
+      $('#avatar_' + id).parent().html(response);
+      img.src = $('#avatar_' + id).attr('src');
+      $('#target').html(img);
+    }
+  })
 }

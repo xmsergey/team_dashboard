@@ -46,6 +46,8 @@ class DashboardController < ApplicationController
     user = User.find_by_id(params[:user_id])
 
     remove_image_for_user(user)
+
+    render partial: 'dashboard/avatar', locals: { user: user }, layout: false if params[:clear_image]
   end
 
   private

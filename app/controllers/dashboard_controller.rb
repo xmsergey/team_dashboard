@@ -40,8 +40,6 @@ class DashboardController < ApplicationController
     image.read
 
     FileUtils.cp(path, path_assets_redmine)
-
-    render partial: 'dashboard/avatar', locals: { user: user }, layout: false
   end
 
   def remove_image
@@ -49,7 +47,7 @@ class DashboardController < ApplicationController
 
     remove_image_for_user(user)
 
-    render partial: 'dashboard/avatar', locals: { user: user }, layout: false
+    render partial: 'dashboard/avatar', locals: { user: user }, layout: false if params[:clear_image]
   end
 
   private

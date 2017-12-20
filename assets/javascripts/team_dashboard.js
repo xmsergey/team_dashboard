@@ -23,7 +23,8 @@ function sendAvatar(id){
   var avatar_popup = $('#avatar_popup');
 
   var img = new Image();
-  img.src = $('#avatar_' + id).attr('src');
+  var avatar = $('#avatar_' + id);
+  img.src = avatar.attr('src');
   $('#target').html(img);
   $('#pictureForm')[0].reset();
   $('#hidden_input').val(id);
@@ -41,22 +42,8 @@ function sendAvatar(id){
       'Remove photo': function(){
         avatar_popup.parent().css('z-index', 1);
         if (confirm('Are you sure?')){
-          $.ajax({
-            method: 'POST',
-            url: 'team_dashboard/remove_image',
-            data: { user_id: id }
-          }).done(function(response){
-            if (response.error_messages !== undefined && response.error_messages !== ""){
-              alert(response.error_messages);
-              $('#avatar_popup').parent().css('z-index', 999);
-            }else{
-              avatar_popup.dialog('destroy');
-              window.location = window.location;
-            }
-          }).fail(function(response){
-            avatar_popup.dialog('destroy');
-            window.location = window.location;
-          });
+          removePhoto(id, img);
+          avatar_popup.dialog('destroy');
         }
       },
       'Save': function(){

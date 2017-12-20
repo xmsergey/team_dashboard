@@ -6,7 +6,7 @@
         <div class="<%= module_class %>">
           <div class="grid">
             <div class="col-avatar">
-              <%= image_tag(get_avatar(user), plugin: 'team_dashboard', id: "avatar_#{user.id}", class: 'avatar', title: "#{user.name}", size: '60x60', onclick: "sendAvatar(#{user.id})")%>
+              <%= render partial: 'avatar', locals: { user: user } %>
             </div>
             <div class="col-desc">
               <table class="user-issues" cellpadding="0" cellspacing="0">

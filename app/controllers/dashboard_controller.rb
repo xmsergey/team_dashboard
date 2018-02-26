@@ -18,6 +18,8 @@ class DashboardController < ApplicationController
     @versions = ((@project.shared_versions.sort || []) + @project.rolled_up_versions.visible).uniq
     @selected_version_id = session_params(:target_version).present? ? session_params(:target_version).to_i : nil
 
+    @ticket_status = 'open' if session_params(:ticket_status) == 'open'
+
     @users = User.in_team(@teams[@selected_team]).order([:firstname, :lastname])
 
     @max_issues_count = @users.count > 0 ? @users.max_by { |user| user.overview_map_issues.count }.overview_map_issues.count : 0

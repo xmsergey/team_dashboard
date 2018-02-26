@@ -14,31 +14,31 @@
                 <tr>
                   <td class="user-name">
                     <strong><%= link_to user.name, user_path(user) %></strong>
+                    <span class="shaded-font story-points points" title='External Points'>EP: <%= external_points(issues) %></span>
                   </td>
-                  <td class="shaded-font story-points" colspan="2" nowrap>Story Points: <%= story_points(issues) %></td>
+                  <td class="shaded-font story-points" title='Story Points' nowrap>SP: <%= story_points(issues) %></td>
                 </tr>
                 <% issues.each_with_index do |issue, index| %>
                   <tr>
-                    <% if index + 1 < TeamDashboardConstants::ISSUES_PER_CARD || issues.count == TeamDashboardConstants::ISSUES_PER_CARD %>
+                    <% if index + 1 < TeamDashboardConstants::ISSUES_PER_CARD_6 || issues.to_a.count == TeamDashboardConstants::ISSUES_PER_CARD_6 %>
                       <td>
                         <p class="truncate">
                           <%= content_tag(:span, '', class: priority_class(issue), title: "#{issue.priority.name} priority") if display_priority %>
                           <%= issue_id_and_subject_tag user, issue, display_shared_mark, display_initials %>
                         </p>
                       </td>
-                      <%= content_tag(:td, eta_value(issue) + (issue.fixed_version_id == 30 ? '-R' : ''), class: 'eta shaded-font') if display_eta %>
-                      <%= content_tag(:td, owner_value_short(user, issue), class: 'initials shaded-font', title: owner_value(user, issue)) if display_initials %>
+                        <%= points_content_tag(issue, :td, class: 'initials shaded-font') %>
                     <% else %>
-                      <td class="more"><%= link_to l(:label_issue_view_all), view_all_issues_path(user), title: "View all issues assigned to #{user.name}" %></td>
+                      <td class="more"><%= link_to l(:label_issue_view_all), view_all_issues_path(user), title: "View all issues where #{user.name} is Technical Owner" %></td>
                       <% break %>
                     <% end %>
                   </tr>
                 <% end %>
-              </table>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-      </div>
     <% end %>
 
     <% if users.count.odd? %>

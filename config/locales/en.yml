@@ -5,6 +5,7 @@ en:
   label_technical_owner: "Technical owner:"
   label_status_ticket_is_open: "Status of ticket is open:"
   label_target_version: "Target Version:"
+  label_ticket_status: "Ticket Status:"
   label_filter: "Filter"
   label_team_management: "Teams Management"
   label_edit_teams: "Edit teams"

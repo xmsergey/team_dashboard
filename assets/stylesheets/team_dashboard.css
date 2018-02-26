@@ -11,6 +11,10 @@
     display: table;
     clear: both;
 }
+.grid-border{
+    display: flex;
+    flex-wrap: wrap;
+}
 [class*='col-'] {
     float: left;
 }
@@ -86,19 +90,40 @@
     width: calc(100% - 73px);
 }
 .module {
-    padding: 15px 20px 15px 25px;
+    padding: 15px 20px 15px 15px;
     height: 103px;
 }
-.module-4 {
-    height: 120px;
+
+@media screen and (max-width: 899px)
+{
+    .module {
+        height: 108px;
+    }
+    .module-6 {
+        height: 155px;
+    }
+    .module-more {
+        height: 170px;
+    }
 }
-.module-more {
-    height: 125px;
+
+@media screen and (min-width: 900px)
+{
+    .module {
+        height: 103px;
+    }
+    .module-6 {
+        height: 145px;
+    }
+    .module-more {
+        height: 158px;
+    }
 }
 
 .grid-border > [class*='col-'] {
     border: 1px solid #E4E4E4;
     border-right-width: 0;
+    border-bottom-width: 0;
 }
 .grid-border > [class*='col-']:nth-last-child(odd) {
     border-right-width: 1px;
@@ -118,6 +143,7 @@
 .user-issues .user-name {
     font-size: 13px;
     padding-bottom: 8px;
+    width: 100%;
 }
 .user-issues .more {
     padding: 5px 0 0;
@@ -149,6 +175,13 @@
 span.disabled-font,
 a.disabled-font {
     color: #AAA;
+}
+
+span.points {
+    margin: 0px 5px;
+    float:right;
+    clear:right;
+    padding-top: 5px;
 }
 
 .priority {

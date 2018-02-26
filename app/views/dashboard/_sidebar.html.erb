@@ -21,6 +21,10 @@
       <label for='target_version'><%= l(:label_target_version) %></label><br />
       <%= select_tag 'target_version', version_options_for_select(@versions, @selected_version_id) %>
     </li>
+    <li>
+      <label for='ticket_status'><%= l(:label_ticket_status) %></label><br />
+      <%= select_tag 'ticket_status', options_for_select([['All', :all], ['Open', :open]], @ticket_status) %>
+    </li>
   </ul>
   <p>
     <%= submit_tag l(:button_apply) %>

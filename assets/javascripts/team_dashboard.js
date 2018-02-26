@@ -103,3 +103,13 @@ function removePhoto(id, img, clear_image) {
 function safeRedirect() {
   window.location = window.location.origin + window.location.pathname + '?' + $('#sidebar form div.filter-block :input').serialize();
 }
+
+function truncateIssuesNames() {
+  $('.truncate').each(function() {
+    var adj = 0;
+    adj += $(this).closest('.col-desc').find('.eta').width();
+    adj += $(this).closest('.col-desc').find('.initials').width();
+    if (adj) adj += 7;
+    $(this).css('width', $(this).closest('.col-desc').width() - adj);
+  });
+}

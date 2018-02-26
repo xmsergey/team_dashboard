@@ -42,17 +42,20 @@ module DashboardHelper
   end
 
   def module_class
-    return 'module' if @max_issues_count < TeamDashboardConstants::ISSUES_PER_CARD
-    @max_issues_count == TeamDashboardConstants::ISSUES_PER_CARD ? 'module module-4' : 'module module-more'
+    issues_in_card = TeamDashboardConstants::ISSUES_PER_CARD
+    issues_in_card_six = TeamDashboardConstants::ISSUES_PER_CARD_6
+
+    return 'module' if @max_issues_count < issues_in_card
+    (@max_issues_count >= issues_in_card && @max_issues_count < issues_in_card_six) ? 'module module-6' : 'module module-more'
   end
 
   def view_all_issues_path(user)
     params = []
-    params << 'c[]=project&c[]=tracker&c[]=status&c[]=priority&c[]=subject&c[]=assigned_to&c[]=updated_on'
-    params << 'f[]=status_id&f[]=assigned_to_id&f[]=&group_by='
-    params << 'op[assigned_to_id]==&op[status_id]=o&set_filter=1'
-    params << 'sort=priority:desc,id:asc'
-    params << "utf8=✓&v[assigned_to_id][]=#{user.id}"
+    params << 'set_filter=1&sort=priority:desc,id&group_by=&t[]='
+    params << 'c[]=project&c[]=tracker&c[]=status&c[]=priority&c[]=subject&c[]=assigned_to&c[]=updated_on&c[]=cf_77'
+    params << 'op[status_id]=*&op[cf_77]=='
+    params << 'f[]=status_id&f[]=cf_77&f[]='
+    params << "utf8=✓&v[cf_77][]=#{user.id}"
     URI.escape("/issues?#{params.join('&')}")
   end
 
@@ -93,14 +96,49 @@ module DashboardHelper
 
     value = owner_field.field_format == 'user' ? user.id : user.name
 
-    Issue.visible
-      .joins("INNER JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue' and custom_field_id = #{owner_field.id} AND value = '#{value}'")
-      .joins('LEFT JOIN agile_data ad on ad.issue_id = issues.id')
-      .where(fixed_version_id: @selected_version_id)
+    issues =
+      Issue.select('issues.*, ad.story_points, cv.value AS `external_priority`').visible
+        .joins("INNER JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue'
+               AND custom_field_id = #{owner_field.id} AND value = '#{value}'")
+        .joins("JOIN custom_fields cuf ON cuf.name = '#{TeamDashboardConstants::EXTERNAL_PRIORITY_FIELD_NAME}'")
+        .joins('LEFT JOIN custom_values cv ON cv.customized_id = issues.id AND cv.custom_field_id = cuf.id')
+        .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
+        .where(fixed_version_id: @selected_version_id)
+
+    @ticket_status ? issues.open : issues
   end
 
   def story_points(issues)
     issues.sum(:story_points)
+  end
+
+  def external_points(issues)
+    issues.sum('cv.value').to_i
+  end
+
+  def story_point(issue)
+    issue.try(:story_points)
+  end
+
+  def external_priority(issue)
+    (/\A[-+]?\d+\z/) === issue.external_priority ? issue.external_priority : nil
+  end
+
+  def points_content_tag(issue, tag, options)
+    if issue.tracker.name == 'Bug'
+      points = external_priority(issue)
+      title = {title: 'External Points'}
+    else
+      points = story_point(issue)
+      title = {title: 'Story Points'}
+    end
+    if points
+      options.merge!(title)
+    else
+      points = TeamDashboardConstants::EMPTY_POINTS_SYMBOL
+    end
+
+    content_tag(tag, points, options)
   end
 
 end

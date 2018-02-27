@@ -29,7 +29,10 @@
                       </td>
                         <%= points_content_tag(issue, :td, class: 'initials shaded-font') %>
                     <% else %>
-                      <td class="more"><%= link_to l(:label_issue_view_all), view_all_issues_path(user), title: "View all issues where #{user.name} is Technical Owner" %></td>
+                      <td class="more">
+                        <%title = "View all issues where #{user.name} is #{owner_instance(user).name}"%>
+                        <%= link_to l(:label_issue_view_all), view_all_issues_path(user), title: title%>
+                      </td>
                       <% break %>
                     <% end %>
                   </tr>

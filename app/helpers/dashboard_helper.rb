@@ -50,13 +50,16 @@ module DashboardHelper
   end
 
   def view_all_issues_path(user)
+    owner_field = owner_instance(user)
+    target_version = @selected_version_id ? "=&v[fixed_version_id][]=#{@selected_version_id}" : '*'
     params = []
     params << 'set_filter=1&sort=priority:desc,id&group_by=&t[]='
-    params << 'c[]=project&c[]=tracker&c[]=status&c[]=priority&c[]=subject&c[]=assigned_to&c[]=updated_on&c[]=cf_77'
-    params << 'op[status_id]=*&op[cf_77]=='
-    params << 'f[]=status_id&f[]=cf_77&f[]='
-    params << "utf8=✓&v[cf_77][]=#{user.id}"
-    URI.escape("/issues?#{params.join('&')}")
+    params << "c[]=project&c[]=tracker&c[]=status&c[]=priority&c[]=subject&c[]=assigned_to&c[]=updated_on"
+    params << "c[]=cf_#{owner_field.id}&c[]=fixed_version"
+    params << "op[status_id]=*&op[cf_#{owner_field.id}]==&op[fixed_version_id]=#{target_version}"
+    params << "f[]=status_id&f[]=cf_#{owner_field.id}&f[]=fixed_version_id&f[]="
+    params << "utf8=✓&v[cf_#{owner_field.id}][]=#{user.id}"
+    URI.escape("/projects/plansource/issues?#{params.join('&')}")
   end
 
   def issue_id_and_subject_tag(user, issue, display_shared_mark, display_initials)
@@ -92,8 +95,7 @@ module DashboardHelper
   end
 
   def user_issues(user)
-    owner_field = user.is_qa_member?(@qa_owner_field) ? @qa_owner_field : @technical_owner_field
-
+    owner_field = owner_instance(user)
     value = owner_field.field_format == 'user' ? user.id : user.name
 
     issues =
@@ -106,6 +108,10 @@ module DashboardHelper
         .where(fixed_version_id: @selected_version_id)
 
     @ticket_status ? issues.open : issues
+  end
+
+  def owner_instance(user)
+    user.is_qa_member?(@qa_owner_field) ? @qa_owner_field : @technical_owner_field
   end
 
   def story_points(issues)

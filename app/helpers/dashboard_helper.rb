@@ -51,14 +51,16 @@ module DashboardHelper
 
   def view_all_issues_path(user)
     owner_field = owner_instance(user)
+    search_params = owner_field.eql?(@qa_owner_field) ? user.name.gsub(' ', '+') : user.id
     target_version = @selected_version_id ? "=&v[fixed_version_id][]=#{@selected_version_id}" : '*'
+
     params = []
     params << 'set_filter=1&sort=priority:desc,id&group_by=&t[]='
     params << "c[]=project&c[]=tracker&c[]=status&c[]=priority&c[]=subject&c[]=assigned_to&c[]=updated_on"
     params << "c[]=cf_#{owner_field.id}&c[]=fixed_version"
     params << "op[status_id]=*&op[cf_#{owner_field.id}]==&op[fixed_version_id]=#{target_version}"
     params << "f[]=status_id&f[]=cf_#{owner_field.id}&f[]=fixed_version_id&f[]="
-    params << "utf8=✓&v[cf_#{owner_field.id}][]=#{user.id}"
+    params << "utf8=✓&v[cf_#{owner_field.id}][]=#{search_params}"
     URI.escape("/projects/plansource/issues?#{params.join('&')}")
   end
 

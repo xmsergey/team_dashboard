@@ -12,14 +12,18 @@
 
 <div class="grid">
   <div class="col-1-1">
-    <%= render partial: 'grid', locals: {
-        users: @users,
-        title: '',
-        display_priority: true,
-        display_shared_mark: true,
-        display_eta: true,
-        display_initials: true
-    } %>
+    <% if @show_support_tickets %>
+      <%= render partial: 'support_tickets' %>
+    <% else %>
+      <%= render partial: 'grid', locals: {
+          users: @users,
+          title: '',
+          display_priority: true,
+          display_shared_mark: true,
+          display_eta: true,
+          display_initials: true
+      } %>
+    <% end %>
   </div>
 </div>
 

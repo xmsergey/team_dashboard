@@ -1,0 +1,20 @@
+<div>
+  <table class="list issues-board">
+    <thead>
+    <tr>
+      <% TeamDashboardConstants::SUPPORT_TICKET_GROUPS.each do |_, group_value| %>
+        <th><%= group_value %></th>
+      <% end %>
+    </tr>
+    </thead>
+    <tr style="text-align: center;white-space: nowrap;" class="issue">
+      <% support_issues.each do |_, issues_data| %>
+        <td class="issue-status-col">
+        <% issues_data.each do |issue| %>
+          <%= render partial: 'issue_card', locals: { issue: issue } %>
+        <% end if issues_data %>
+        </td>
+      <% end %>
+    </tr>
+  </table>
+</div>

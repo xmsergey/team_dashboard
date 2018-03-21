@@ -19,6 +19,7 @@ class DashboardController < ApplicationController
     @selected_version_id = session_params(:target_version).present? ? session_params(:target_version).to_i : nil
 
     @ticket_status = 'open' if session_params(:ticket_status) == 'open'
+    @show_support_tickets = params[:show_support_tickets]
 
     @users = User.in_team(@teams[@selected_team]).order([:firstname, :lastname])
 

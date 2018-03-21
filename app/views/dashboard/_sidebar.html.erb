@@ -4,7 +4,9 @@
   <h3><%= l(:label_team_management)%></h3>
   <ul>
     <li><%= link_to l(:label_edit_teams), team_management_path %></li>
-  </ul>
+  </ul><br/>
+  <label for='show_support_tickets'><%= l(:label_show_support_tickets) %></label>
+  <%= check_box_tag 'show_support_tickets', @show_support_tickets, @show_support_tickets, onchange: 'disableFields();' %>
   <h3><%= l(:label_filter)%></h3>
   <ul>
     <li>
@@ -17,13 +19,13 @@
         <%= select_tag 'technical_owner', options_for_select(@technical_owners, @selected_technical_owner) %>
       </li>
     <% end %>
-    <li>
+    <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
       <label for='target_version'><%= l(:label_target_version) %></label><br />
-      <%= select_tag 'target_version', version_options_for_select(@versions, @selected_version_id) %>
+      <%= select_tag 'target_version', version_options_for_select(@versions, @selected_version_id), disabled: @show_support_tickets %>
     </li>
-    <li>
+    <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
       <label for='ticket_status'><%= l(:label_ticket_status) %></label><br />
-      <%= select_tag 'ticket_status', options_for_select([['All', :all], ['Open', :open]], @ticket_status) %>
+      <%= select_tag 'ticket_status', options_for_select([['All', :all], ['Open', :open]], @ticket_status), disabled: @show_support_tickets %>
     </li>
   </ul>
   <p>

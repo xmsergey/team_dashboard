@@ -1,0 +1,13 @@
+<div class="issue-card <%= get_color_class(issue) %> " data-id="<%= issue.id %>">
+  <span class="fields">
+    <p class="issue-id">
+      <strong><%= h("#{issue.tracker} ##{issue.id}") %></strong>
+    </p>
+    <p class="name" ><%= link_to "#{issue.subject.truncate(100)}", issue_path(issue) %></p>
+    <p class="issue_attributes">
+      <% get_issue_attributes(issue).each do |attribute| %>
+        <b><%= attribute[:caption] %></b>: <%= attribute[:value] %><br>
+      <% end %>
+    </p>
+  </span>
+</div>

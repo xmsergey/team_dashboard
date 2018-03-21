@@ -112,6 +112,60 @@ module DashboardHelper
     @ticket_status ? issues.open : issues
   end
 
+  def support_issues
+    all_issues =
+      Issue.select('cv1.value as esc_tier_3_time, cv2.value as support_analyst, issues.*')
+        .joins('join issue_statuses iss_st on iss_st.id = issues.status_id and iss_st.is_closed != 1')
+        .joins("join custom_values cv1 on cv1.customized_id = issues.id and cv1.customized_type = 'Issue'")
+        .joins("join custom_fields cf1 on cf1.id = cv1.custom_field_id and cf1.name = '#{TeamDashboardConstants::TIER_3_ESC_DATE_FIELD_NAME}'")
+        .joins("join custom_values cv2 on cv2.customized_id = issues.id and cv2.customized_type = 'Issue'")
+        .joins("join custom_fields cf2 on cf2.id = cv2.custom_field_id and cf2.name = '#{TeamDashboardConstants::SUPPORT_ANALYST_FIELD_NAME}'")
+        .joins("join taggings tagg on tagg.taggable_type = 'Issue' and tagg.taggable_id = `issues`.id")
+        .joins('join tags tag on tag.id = tagg.tag_id')
+        .where("cv1.value != '' and tag.name = '#{TeamDashboardConstants::SUPPORT_TICKET_TEAM_FILTER[@selected_team]}'")
+
+    issues = {}
+    selected_issue_ids = []
+
+    TeamDashboardConstants::SUPPORT_TICKET_GROUPS.each do |group_code, _|
+      case group_code
+      when :support_team then
+        issues[group_code] =
+          all_issues
+            .where("cv2.value != ''")
+        selected_issue_ids.push(issues[group_code].pluck(:id))
+      when :ps_developer then
+        issues[group_code] =
+          all_issues
+            .joins('join users u on u.id = issues.assigned_to_id')
+            .joins('join members m on m.user_id = u.id')
+            .joins('join member_roles mr on mr.member_id = m.id')
+            .joins('join roles r on r.id = mr.role_id')
+            .where("r.name = '#{TeamDashboardConstants::PS_DEVELOPER_ROLE_NAME}'")
+            .group('issues.id')
+        selected_issue_ids.push(issues[group_code].pluck(:id))
+      when :beltech then
+        issues[group_code] =
+          all_issues
+            .joins("join custom_values cv3 on cv3.customized_id = issues.id and cv3.customized_type = 'Issue'")
+            .joins("join custom_fields cf3 on cf3.id = cv3.custom_field_id and cf3.name = '#{TeamDashboardConstants::BELTECH_PM_FIELD_NAME}'")
+            .joins('join users u on u.id = issues.assigned_to_id')
+            .joins('join members m on m.user_id = u.id')
+            .joins('join member_roles mr on mr.member_id = m.id')
+            .joins('join roles r on r.id = mr.role_id')
+            .where("(r.name = '#{TeamDashboardConstants::BELTECH_PROGRAMMER_ROLE_NAME}' or cv3.value != '')")
+            .group('issues.id')
+        selected_issue_ids.push(issues[group_code].pluck(:id))
+      else
+        issues[group_code] =
+          all_issues
+            .where('issues.id not in (?)', selected_issue_ids.flatten)
+      end
+    end
+
+    issues
+  end
+
   def owner_instance(user)
     user.is_qa_member?(@qa_owner_field) ? @qa_owner_field : @technical_owner_field
   end
@@ -147,6 +201,24 @@ module DashboardHelper
     end
 
     content_tag(tag, points, options)
+  end
+
+  def get_color_class(issue)
+    TeamDashboardConstants::SUPPORT_TICKET_PRIORITY_COLORS[issue.priority.name.to_sym]
+  end
+
+  def get_issue_attributes(issue)
+    attributes = []
+
+    attributes << { caption: 'Status', value: issue.status }
+    attributes << { caption: 'Priority', value: issue.priority }
+    attributes << { caption: 'Assignee', value: issue.assigned_to }
+    attributes << { caption: 'Beltech PM', value: issue.beltech_pm }
+    attributes << { caption: 'Support Analyst', value: issue[:support_analyst] }
+    attributes << { caption: 'Start Date', value: issue.start_date }
+    attributes << { caption: 'Escalated to tier 3 time', value: "#{issue[:esc_tier_3_time]} (#{time_ago_in_words(issue[:esc_tier_3_time].to_time)} ago)" }
+
+    attributes
   end
 
 end

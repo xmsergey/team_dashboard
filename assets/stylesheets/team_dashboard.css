@@ -246,3 +246,13 @@ span.points {
 .filter-block li.checkbox-line-height {
     line-height: 33px;
 }
+
+.issue-card.red {background-color: #FFE2E3; border-color: rgb(255, 201, 201);}
+.issue-card.green {background-color: #DFFFCC; border-color: rgb(190, 239, 190);}
+.issue-card.blue {background-color: #DCE7FF; border-color: rgb(189, 189, 233);}
+.issue-card.turquoise {background-color: #C4FDFF; border-color: rgb(151, 222, 214);}
+.issue-card.lightgreen {background-color: #D2FFEF; border-color: rgb(184, 228, 226);}
+.issue-card.yellow {background-color: #FFFD9C; border-color: rgb(234, 234, 94);}
+.issue-card.orange {background-color: #FFDBBA; border-color: rgb(255, 202, 105);}
+.issue-card.purple {background-color: #EFDFFC; border-color: rgb(233, 186, 233);}
+.issue-card.gray {background-color: #e1e1e1; border-color: rgb(198, 198, 198);}

@@ -132,8 +132,12 @@ module DashboardHelper
       when :support_team then
         issues[group_code] =
           all_issues
+            .select("CONCAT(u.firstname, ' ', u.lastname) as assigned_to")
+            .joins('JOIN users u on u.id = issues.assigned_to_id')
             .where("cv2.value != ''")
-        selected_issue_ids.push(issues[group_code].pluck(:id))
+            .having("INSTR((select cf.possible_values from custom_fields cf
+                    where cf.name = 'Support Analyst'), assigned_to)")
+        selected_issue_ids.push(issues[group_code].map(&:id)).flatten!
       when :ps_developer then
         issues[group_code] =
           all_issues
@@ -141,9 +145,9 @@ module DashboardHelper
             .joins('join members m on m.user_id = u.id')
             .joins('join member_roles mr on mr.member_id = m.id')
             .joins('join roles r on r.id = mr.role_id')
-            .where("r.name = '#{TeamDashboardConstants::PS_DEVELOPER_ROLE_NAME}'")
+            .where("r.name = '#{TeamDashboardConstants::PS_DEVELOPER_ROLE_NAME}' || r.name = '#{TeamDashboardConstants::PS_DEVELOPER_QA_ROLE_NAME}'")
             .group('issues.id')
-        selected_issue_ids.push(issues[group_code].pluck(:id))
+        selected_issue_ids.push(issues[group_code].map(&:id)).flatten!
       when :beltech then
         issues[group_code] =
           all_issues
@@ -153,13 +157,13 @@ module DashboardHelper
             .joins('join members m on m.user_id = u.id')
             .joins('join member_roles mr on mr.member_id = m.id')
             .joins('join roles r on r.id = mr.role_id')
-            .where("(r.name = '#{TeamDashboardConstants::BELTECH_PROGRAMMER_ROLE_NAME}' or cv3.value != '')")
+            .where("(r.name = '#{TeamDashboardConstants::BELTECH_PROGRAMMER_ROLE_NAME}' and cv3.value != '')")
             .group('issues.id')
-        selected_issue_ids.push(issues[group_code].pluck(:id))
+        selected_issue_ids.push(issues[group_code].map(&:id)).flatten!
       else
         issues[group_code] =
           all_issues
-            .where('issues.id not in (?)', selected_issue_ids.flatten)
+            .where('issues.id not in (?)', selected_issue_ids.any? ? selected_issue_ids: [''])
       end
     end
 
@@ -215,7 +219,6 @@ module DashboardHelper
     attributes << { caption: 'Assignee', value: issue.assigned_to }
     attributes << { caption: 'Beltech PM', value: issue.beltech_pm }
     attributes << { caption: 'Support Analyst', value: issue[:support_analyst] }
-    attributes << { caption: 'Start Date', value: issue.start_date }
     attributes << { caption: 'Escalated to tier 3 time', value: "#{issue[:esc_tier_3_time]} (#{time_ago_in_words(issue[:esc_tier_3_time].to_time)} ago)" }
 
     attributes

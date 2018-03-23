@@ -4,6 +4,7 @@ module TeamDashboardConstants
   SUPPORT_ANALYST_FIELD_NAME = 'Support Analyst'
   BELTECH_PM_FIELD_NAME = 'BelTech PM'
   PS_DEVELOPER_ROLE_NAME = 'Developer'
+  PS_DEVELOPER_QA_ROLE_NAME = 'Developer & QA'
   BELTECH_PROGRAMMER_ROLE_NAME = 'BelTech Programmer'
   REMAINING_TIME_FIELD_NAME = 'ETA'.freeze
   USER_TYPE_NAME = 'User'.freeze

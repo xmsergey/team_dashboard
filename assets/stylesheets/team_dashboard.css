@@ -256,3 +256,15 @@ span.points {
 .issue-card.orange {background-color: #FFDBBA; border-color: rgb(255, 202, 105);}
 .issue-card.purple {background-color: #EFDFFC; border-color: rgb(233, 186, 233);}
 .issue-card.gray {background-color: #e1e1e1; border-color: rgb(198, 198, 198);}
+
+.issue-card {
+    padding: 5px;
+    border: solid 1px #d5d5d5;
+    background-color: #ffffdd;
+    margin: 5px;
+    word-wrap: break-word;
+    text-align: left;
+    white-space: normal;
+    cursor: auto;
+    position: relative;
+}

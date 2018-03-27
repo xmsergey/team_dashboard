@@ -120,9 +120,9 @@ module DashboardHelper
         .joins("join custom_fields cf1 on cf1.id = cv1.custom_field_id and cf1.name = '#{TeamDashboardConstants::TIER_3_ESC_DATE_FIELD_NAME}'")
         .joins("join custom_values cv2 on cv2.customized_id = issues.id and cv2.customized_type = 'Issue'")
         .joins("join custom_fields cf2 on cf2.id = cv2.custom_field_id and cf2.name = '#{TeamDashboardConstants::SUPPORT_ANALYST_FIELD_NAME}'")
-        .joins("join taggings tagg on tagg.taggable_type = 'Issue' and tagg.taggable_id = `issues`.id")
-        .joins('join tags tag on tag.id = tagg.tag_id')
-        .where("cv1.value != '' and tag.name = '#{TeamDashboardConstants::SUPPORT_TICKET_TEAM_FILTER[@selected_team]}'")
+        .joins("join custom_values cv3 on cv3.customized_id = issues.id and cv3.customized_type = 'Issue'")
+        .joins("join custom_fields cf3 on cf3.id = cv3.custom_field_id and cf3.name = '#{TeamDashboardConstants::TIER_3_TEAM_FIELD_NAME}'")
+        .where("cv1.value != '' and cv3.value = '#{@teams[@selected_team]}'")
 
     issues = {}
     selected_issue_ids = []
@@ -132,8 +132,12 @@ module DashboardHelper
       when :support_team then
         issues[group_code] =
           all_issues
+            .select("CONCAT(u.firstname, ' ', u.lastname) as assigned_to")
+            .joins('JOIN users u on u.id = issues.assigned_to_id')
             .where("cv2.value != ''")
-        selected_issue_ids.push(issues[group_code].pluck(:id))
+            .having("INSTR((select cf.possible_values from custom_fields cf
+                    where cf.name = 'Support Analyst'), assigned_to)")
+        selected_issue_ids.push(issues[group_code].map(&:id)).flatten!
       when :ps_developer then
         issues[group_code] =
           all_issues
@@ -141,25 +145,25 @@ module DashboardHelper
             .joins('join members m on m.user_id = u.id')
             .joins('join member_roles mr on mr.member_id = m.id')
             .joins('join roles r on r.id = mr.role_id')
-            .where("r.name = '#{TeamDashboardConstants::PS_DEVELOPER_ROLE_NAME}'")
+            .where("r.name = '#{TeamDashboardConstants::PS_DEVELOPER_ROLE_NAME}' || r.name = '#{TeamDashboardConstants::PS_DEVELOPER_QA_ROLE_NAME}'")
             .group('issues.id')
-        selected_issue_ids.push(issues[group_code].pluck(:id))
+        selected_issue_ids.push(issues[group_code].map(&:id)).flatten!
       when :beltech then
         issues[group_code] =
           all_issues
-            .joins("join custom_values cv3 on cv3.customized_id = issues.id and cv3.customized_type = 'Issue'")
-            .joins("join custom_fields cf3 on cf3.id = cv3.custom_field_id and cf3.name = '#{TeamDashboardConstants::BELTECH_PM_FIELD_NAME}'")
+            .joins("join custom_values cv4 on cv4.customized_id = issues.id and cv4.customized_type = 'Issue'")
+            .joins("join custom_fields cf4 on cf4.id = cv4.custom_field_id and cf4.name = '#{TeamDashboardConstants::BELTECH_PM_FIELD_NAME}'")
             .joins('join users u on u.id = issues.assigned_to_id')
             .joins('join members m on m.user_id = u.id')
             .joins('join member_roles mr on mr.member_id = m.id')
             .joins('join roles r on r.id = mr.role_id')
-            .where("(r.name = '#{TeamDashboardConstants::BELTECH_PROGRAMMER_ROLE_NAME}' or cv3.value != '')")
+            .where("(r.name = '#{TeamDashboardConstants::BELTECH_PROGRAMMER_ROLE_NAME}' and cv4.value != '')")
             .group('issues.id')
-        selected_issue_ids.push(issues[group_code].pluck(:id))
+        selected_issue_ids.push(issues[group_code].map(&:id)).flatten!
       else
         issues[group_code] =
           all_issues
-            .where('issues.id not in (?)', selected_issue_ids.flatten)
+            .where('issues.id not in (?)', selected_issue_ids.any? ? selected_issue_ids: [''])
       end
     end
 
@@ -215,7 +219,6 @@ module DashboardHelper
     attributes << { caption: 'Assignee', value: issue.assigned_to }
     attributes << { caption: 'Beltech PM', value: issue.beltech_pm }
     attributes << { caption: 'Support Analyst', value: issue[:support_analyst] }
-    attributes << { caption: 'Start Date', value: issue.start_date }
     attributes << { caption: 'Escalated to tier 3 time', value: "#{issue[:esc_tier_3_time]} (#{time_ago_in_words(issue[:esc_tier_3_time].to_time)} ago)" }
 
     attributes

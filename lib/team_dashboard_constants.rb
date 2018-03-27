@@ -1,9 +1,11 @@
 module TeamDashboardConstants
   EXTERNAL_PRIORITY_FIELD_NAME = 'External Priority'
   TIER_3_ESC_DATE_FIELD_NAME = 'Tier 3 Esc. Date'
+  TIER_3_TEAM_FIELD_NAME = 'Tier 3 Team'
   SUPPORT_ANALYST_FIELD_NAME = 'Support Analyst'
   BELTECH_PM_FIELD_NAME = 'BelTech PM'
   PS_DEVELOPER_ROLE_NAME = 'Developer'
+  PS_DEVELOPER_QA_ROLE_NAME = 'Developer & QA'
   BELTECH_PROGRAMMER_ROLE_NAME = 'BelTech Programmer'
   REMAINING_TIME_FIELD_NAME = 'ETA'.freeze
   USER_TYPE_NAME = 'User'.freeze
@@ -25,14 +27,4 @@ module TeamDashboardConstants
     Urgent: 'orange',
     Immediate: 'red'
   }
-  SUPPORT_TICKET_TEAM_FILTER = {
-    analytics: 'AnalyticsTeam',
-    benadmin: 'BenAdminTeam',
-    benextensions: 'BenExtensionsTeam',
-    clientconfig: 'ClientConfigTeam',
-    enrollment: 'EnrollmentTeam',
-    'hcm-integrations' => 'HcmIntegrationsTeam',
-    'hcm-dedicated' => 'HcmDedicatedTeam',
-    'technical-wealth' => 'TechnicalWealthTeam'
-  }.with_indifferent_access
 end

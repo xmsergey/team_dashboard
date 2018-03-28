@@ -102,12 +102,12 @@ module DashboardHelper
 
     issues =
       Issue.select('issues.*, ad.story_points, cv.value AS `external_priority`').visible
-        .joins("INNER JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue'
-               AND custom_field_id = #{owner_field.id} AND value = '#{value}'")
+        .joins("INNER JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue'")
         .joins("JOIN custom_fields cuf ON cuf.name = '#{TeamDashboardConstants::EXTERNAL_PRIORITY_FIELD_NAME}'")
         .joins('LEFT JOIN custom_values cv ON cv.customized_id = issues.id AND cv.custom_field_id = cuf.id')
         .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
         .where(fixed_version_id: @selected_version_id)
+        .where(cf: { custom_field_id: owner_field.id, value: value })
 
     @ticket_status ? issues.open : issues
   end
@@ -122,7 +122,7 @@ module DashboardHelper
         .joins("join custom_fields cf2 on cf2.id = cv2.custom_field_id and cf2.name = '#{TeamDashboardConstants::SUPPORT_ANALYST_FIELD_NAME}'")
         .joins("join custom_values cv3 on cv3.customized_id = issues.id and cv3.customized_type = 'Issue'")
         .joins("join custom_fields cf3 on cf3.id = cv3.custom_field_id and cf3.name = '#{TeamDashboardConstants::TIER_3_TEAM_FIELD_NAME}'")
-        .where("cv1.value != '' and cv3.value = '#{@teams[@selected_team]}'")
+        .where("cv1.value != '' and cv3.value = ?", @teams[@selected_team])
 
     issues = {}
     selected_issue_ids = []

@@ -127,3 +127,20 @@ function disableFields() {
     });
   }
 }
+
+function addToTeam(theSelFrom, theSelTo) {
+  var selectedUsers = $(theSelFrom).find('option:selected').clone();
+  selectedUsers.each(function(){
+    if (!userInGroup(this, theSelTo)) {
+      $(this).appendTo($(theSelTo));
+    }
+  });
+}
+
+function removeFromTeam(theSelFrom) {
+  $(theSelFrom).find('option:selected').remove();
+}
+
+function userInGroup(user, group) {
+  return $(group).find('option[value=' + user.value + ']').length > 0;
+}

@@ -1,5 +1,10 @@
 <% html_title 'Team Management' %>
 
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'team_dashboard', plugin: 'team_dashboard' %>
+  <%= javascript_include_tag 'team_dashboard', plugin: 'team_dashboard' %>
+<% end %>
+
 <div class='wiki wiki-page'>
   <h1>Teams Management</h1>
 </div>
@@ -17,9 +22,9 @@
                            id: team_control_id, multiple: true, size: 10, style: 'width:250px' %>
           </td>
           <td class="buttons">
-            <input type="button" value="&#8594;" onclick="moveOptions('#<%= "#{team_control_id}" %>', '#available_users');" />
+            <input type="button" value="&#8594;" onclick="removeFromTeam('#<%= "#{team_control_id}" %>');" />
             <br />
-            <input type="button" value="&#8592;" onclick="moveOptions('#available_users', '#<%= "#{team_control_id}" %>');" />
+            <input type="button" value="&#8592;" onclick="addToTeam('#available_users', '#<%= "#{team_control_id}" %>');" />
           </td>
           <% if index == 0 %>
             <td rowspan="<%= @teams.count %>">

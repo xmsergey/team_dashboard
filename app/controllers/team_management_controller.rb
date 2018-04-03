@@ -13,7 +13,7 @@ class TeamManagementController < ApplicationController
     team_members = TeamManagement.team_members
     @teams = {}
     @teams_available.each_key { |team_key| @teams[team_key] = team_members[team_key] || [] }
-    @unselected_users = TeamManagement.non_teamed_users
+    @unselected_users = TeamManagement.all_users
   end
 
   def update

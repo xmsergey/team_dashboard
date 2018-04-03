@@ -25,12 +25,16 @@ class TeamManagement < ActiveRecord::Base
     ret_val
   end
 
+  def self.all_users
+    User.sorted.where(type: TeamDashboardConstants::USER_TYPE_NAME).to_a
+  end
+
   def self.teamed_users
     self.all.collect { |team| team.user }
   end
 
   def self.non_teamed_users
-    User.sorted.where(type: TeamDashboardConstants::USER_TYPE_NAME).to_a - self.teamed_users
+    self.all_users - self.teamed_users
   end
 
   def self.team(name)

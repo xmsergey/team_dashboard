@@ -185,29 +185,25 @@ span.points {
 }
 
 .priority {
-    width: 8px;
-    height: 8px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
-    margin: 3px 5px 3px 1px;
-    float: left;
+  margin: 3px 5px 3px 1px;
+  text-align: center;
+  float: left;
 }
 .low-priority {
-    background: #9BCA3E;
+  color: #9BCA3E;
 }
 .normal-priority {
-    background: #3ABBC9;
+  color: #3ABBC9;
 }
 .high-priority {
-    background: #FFB92A;
+  color: #FFB92A;
 }
 .urgent-priority,
 .immediate-priority {
-    background: #ED5314;
+  color: #ED5314;
 }
 .disabled-priority {
-    background: #AAA;
+  color: #AAA;
 }
 
 .unoccupied-hours,
@@ -268,3 +264,5 @@ span.points {
     cursor: auto;
     position: relative;
 }
+
+.width-15 { width: 15px; }

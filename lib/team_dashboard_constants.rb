@@ -19,12 +19,18 @@ module TeamDashboardConstants
     ps_developer: 'PS Developer',
     beltech: 'Beltech',
     customer: 'Customer'
-  }
+  }.freeze
   SUPPORT_TICKET_PRIORITY_COLORS = {
     Low: 'turquoise',
     Normal: 'lightgreen',
     High: 'yellow',
     Urgent: 'orange',
     Immediate: 'red'
-  }
+  }.freeze
+  TRACKERS = {
+    bug: 'Bug',
+    feature: 'Feature',
+    user_story: 'User Story',
+    spike: 'Spike'
+  }.freeze
 end

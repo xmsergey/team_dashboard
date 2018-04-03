@@ -38,7 +38,22 @@ module DashboardHelper
   end
 
   def priority_class(issue)
-    "priority #{issue.priority.name.downcase}-priority"
+    "priority width-15 #{issue.priority.name.downcase}-priority"
+  end
+
+  def tracker_class(issue)
+    priority_class = 'fas ' + priority_class(issue)
+    issue_tracker_name = issue.tracker.name
+
+    icon = case issue_tracker_name
+           when TeamDashboardConstants::TRACKERS[:bug] then ' fa-bug'
+           when TeamDashboardConstants::TRACKERS[:feature] then ' fa-plus'
+           when TeamDashboardConstants::TRACKERS[:user_story] then ' fa-address-card'
+           when TeamDashboardConstants::TRACKERS[:spike] then ' fa-question-circle'
+           else ' fa-circle'
+           end
+
+    priority_class + icon
   end
 
   def module_class
@@ -108,6 +123,7 @@ module DashboardHelper
         .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
         .where(fixed_version_id: @selected_version_id)
         .where(cf: { custom_field_id: owner_field.id, value: value })
+        .order('issues.priority_id DESC')
 
     @ticket_status ? issues.open : issues
   end
@@ -123,6 +139,7 @@ module DashboardHelper
         .joins("join custom_values cv3 on cv3.customized_id = issues.id and cv3.customized_type = 'Issue'")
         .joins("join custom_fields cf3 on cf3.id = cv3.custom_field_id and cf3.name = '#{TeamDashboardConstants::TIER_3_TEAM_FIELD_NAME}'")
         .where("cv1.value != '' and cv3.value = ?", @teams[@selected_team])
+        .order('issues.priority_id DESC')
 
     issues = {}
     selected_issue_ids = []

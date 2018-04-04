@@ -199,7 +199,10 @@ module DashboardHelper
       displayed_name(group, positions)
     end
 
-    positions.join(', ')
+    team_positions = positions.join(', ')
+    team_positions = '(' + team_positions + ')' if team_positions.present?
+
+    team_positions.html_safe
   end
 
   def displayed_name(group, positions)

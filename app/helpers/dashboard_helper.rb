@@ -191,6 +191,23 @@ module DashboardHelper
     user.is_qa_member?(@qa_owner_field) ? @qa_owner_field : @technical_owner_field
   end
 
+  def user_positions(user)
+    positions = []
+    user_groups = user.groups.pluck(:lastname)
+
+    user_groups.each do |group|
+      displayed_name(group, positions)
+    end
+
+    positions.join(', ')
+  end
+
+  def displayed_name(group, positions)
+    TeamDashboardConstants::USER_GROUPS.each do |group_name, displayed_name|
+      positions << displayed_name if group_name == group
+    end
+  end
+
   def story_points(issues)
     issues.sum(:story_points)
   end

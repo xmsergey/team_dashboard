@@ -33,4 +33,9 @@ module TeamDashboardConstants
     user_story: 'User Story',
     spike: 'Spike'
   }.freeze
+  USER_GROUPS = [
+    %w[Developers Developer],
+    %w[QA QA],
+    ['BelTech SLC', 'BelTech PM']
+  ].freeze
 end

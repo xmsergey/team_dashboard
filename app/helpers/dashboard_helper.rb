@@ -56,6 +56,10 @@ module DashboardHelper
     priority_class + icon
   end
 
+  def tracker_title(issue)
+    "#{issue.tracker.name} (#{issue.priority.name} priority)"
+  end
+
   def module_class
     issues_in_card = TeamDashboardConstants::ISSUES_PER_CARD
     issues_in_card_six = TeamDashboardConstants::ISSUES_PER_CARD_6

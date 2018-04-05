@@ -64,9 +64,8 @@ module DashboardHelper
     (@max_issues_count >= issues_in_card && @max_issues_count < issues_in_card_six) ? 'module module-6' : 'module module-more'
   end
 
-  def view_all_issues_path(user)
-    owner_field = owner_instance(user)
-    search_params = owner_field.eql?(@qa_owner_field) ? user.name.gsub(' ', '+') : user.id
+  def view_all_issues_path(user, issues)
+    owner_field, search_params = detect_owner(issues, user)
     target_version = @selected_version_id ? "=&v[fixed_version_id][]=#{@selected_version_id}" : '*'
 
     params = []
@@ -122,7 +121,7 @@ module DashboardHelper
         .joins('LEFT JOIN custom_values cv ON cv.customized_id = issues.id AND cv.custom_field_id = cuf.id')
         .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
         .where(fixed_version_id: @selected_version_id)
-        .where(cf: { custom_field_id: owner_field.id, value: value })
+        .where('(cf.custom_field_id = ? AND cf.value = ?) OR (cf.custom_field_id = ? AND `cf`.value = ?)', owner_field.id, value, pm_field_instance.id, user.name)
         .order('issues.priority_id DESC')
 
     @ticket_status ? issues.open : issues
@@ -259,6 +258,20 @@ module DashboardHelper
     attributes << { caption: 'Escalated to tier 3 time', value: "#{issue[:esc_tier_3_time]} (#{time_ago_in_words(issue[:esc_tier_3_time].to_time)} ago)" }
 
     attributes
+  end
+
+  private
+
+  def pm_field_instance
+    @pm_field
+  end
+
+  def detect_owner(issues, user)
+    if issues.detect { |issue| issue.custom_field_value(pm_field_instance.id) == user.name }
+      [pm_field_instance, user.name]
+    else
+      [owner_instance(user), owner_instance(user).eql?(@qa_owner_field) ? user.name.gsub(' ', '+') : user.id]
+    end
   end
 
 end

@@ -11,6 +11,7 @@ class DashboardController < ApplicationController
 
     @technical_owner_field = CustomField.where(name: Setting.plugin_team_dashboard['technical_owner_field_name']).first
     @qa_owner_field = CustomField.where(name: Setting.plugin_team_dashboard['qa_owner_field_name']).first
+    @pm_field = CustomField.where(name: TeamDashboardConstants::BELTECH_PM_FIELD_NAME).first
 
     @teams = TeamManagement.available_teams
     @selected_team = session_params(:team, @teams.keys.first)

@@ -31,7 +31,7 @@
                     <% else %>
                       <td class="more">
                         <%title = "View all issues where #{user.name} is #{owner_instance(user).name}"%>
-                        <%= link_to l(:label_issue_view_all), view_all_issues_path(user), title: title%>
+                        <%= link_to l(:label_issue_view_all), view_all_issues_path(user, issues), title: title%>
                       </td>
                       <% break %>
                     <% end %>

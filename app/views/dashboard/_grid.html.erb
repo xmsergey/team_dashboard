@@ -13,7 +13,7 @@
                 <% issues = user_issues(user) %>
                 <tr>
                   <td class="user-name">
-                    <strong><%= link_to user.name, user_path(user) %></strong>
+                    <strong><%= link_to user.name, user_path(user) %></strong><span class="shaded-font" style="margin-left: 5px"><%= user_positions(user) %></span>
                     <span class="shaded-font story-points points" title='External Points'>EP: <%= external_points(issues) %></span>
                   </td>
                   <td class="shaded-font story-points" title='Story Points' nowrap>SP: <%= story_points(issues) %></td>
@@ -23,7 +23,7 @@
                     <% if index + 1 < TeamDashboardConstants::ISSUES_PER_CARD_6 || issues.to_a.count == TeamDashboardConstants::ISSUES_PER_CARD_6 %>
                       <td>
                         <p class="truncate <%= ticket_team_css(issue) %>">
-                          <%= content_tag(:span, '', class: priority_class(issue), title: "#{issue.priority.name} priority") if display_priority %>
+                          <%= content_tag(:i, '', class: tracker_class(issue), title: "#{issue.priority.name} priority") if display_priority %>
                           <%= issue_id_and_subject_tag user, issue, display_shared_mark, display_initials %>
                         </p>
                       </td>

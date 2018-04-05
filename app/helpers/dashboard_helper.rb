@@ -38,7 +38,22 @@ module DashboardHelper
   end
 
   def priority_class(issue)
-    "priority #{issue.priority.name.downcase}-priority"
+    "priority width-15 #{issue.priority.name.downcase}-priority"
+  end
+
+  def tracker_class(issue)
+    priority_class = 'fas ' + priority_class(issue)
+    issue_tracker_name = issue.tracker.name
+
+    icon = case issue_tracker_name
+           when TeamDashboardConstants::TRACKERS[:bug] then ' fa-bug'
+           when TeamDashboardConstants::TRACKERS[:feature] then ' fa-plus'
+           when TeamDashboardConstants::TRACKERS[:user_story] then ' fa-address-card'
+           when TeamDashboardConstants::TRACKERS[:spike] then ' fa-question-circle'
+           else ' fa-circle'
+           end
+
+    priority_class + icon
   end
 
   def module_class
@@ -117,6 +132,7 @@ module DashboardHelper
         .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
         .where(fixed_version_id: @selected_version_id)
         .where(cf: { custom_field_id: owner_field.id, value: value })
+        .order('issues.priority_id DESC')
 
     unless @show_ticket_different_teams
       issues = issues.joins("JOIN custom_fields cf_t ON cf_t.id = '#{@team_field.id}'")
@@ -138,7 +154,8 @@ module DashboardHelper
         .joins("join custom_fields cf2 on cf2.id = cv2.custom_field_id and cf2.name = '#{TeamDashboardConstants::SUPPORT_ANALYST_FIELD_NAME}'")
         .joins("join custom_values cv3 on cv3.customized_id = issues.id and cv3.customized_type = 'Issue'")
         .joins("join custom_fields cf3 on cf3.id = cv3.custom_field_id and cf3.name = '#{TeamDashboardConstants::TIER_3_TEAM_FIELD_NAME}'")
-        .where("cv1.value != '' and cv3.value = ?", @selected_team_value)
+        .where("cv1.value != '' and cv3.value = ?", @teams[@selected_team])
+        .order('issues.priority_id DESC')
 
     issues = {}
     selected_issue_ids = []
@@ -188,6 +205,26 @@ module DashboardHelper
 
   def owner_instance(user)
     user.is_qa_member?(@qa_owner_field) ? @qa_owner_field : @technical_owner_field
+  end
+
+  def user_positions(user)
+    positions = []
+    user_groups = user.groups.pluck(:lastname)
+
+    user_groups.each do |group|
+      displayed_name(group, positions)
+    end
+
+    team_positions = positions.join(', ')
+    team_positions = '(' + team_positions + ')' if team_positions.present?
+
+    team_positions.html_safe
+  end
+
+  def displayed_name(group, positions)
+    TeamDashboardConstants::USER_GROUPS.each do |group_name, displayed_name|
+      positions << displayed_name if group_name == group
+    end
   end
 
   def story_points(issues)

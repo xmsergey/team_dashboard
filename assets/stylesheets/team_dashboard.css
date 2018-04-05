@@ -156,7 +156,19 @@
     text-align: right;
     width: 21px;
 }
-
+.user-issues .team {
+    padding: 0 4px;
+}
+.user-issues .other-team {
+    filter: grayscale(100%);
+    opacity: .7;
+}
+.user-issues .other-team a {
+    opacity: .9;
+}
+.user-issues .team.undefined {
+    color: #cdcdcd;
+}
 .truncate {
     width: 250px;
     white-space: nowrap;
@@ -243,8 +255,8 @@ span.points {
 .filter-block select {
     width: 99%;
 }
-.filter-block li.checkbox-line-height {
-    line-height: 33px;
+.filter-block li {
+    min-height: 25px;
 }
 
 .issue-card.red {background-color: #FFE2E3; border-color: rgb(255, 201, 201);}

@@ -22,8 +22,8 @@
                   <tr>
                     <% if index + 1 < TeamDashboardConstants::ISSUES_PER_CARD_6 || issues.to_a.count == TeamDashboardConstants::ISSUES_PER_CARD_6 %>
                       <td>
-                        <p class="truncate">
-                          <%= content_tag(:i, '', class: tracker_class(issue), title: "#{issue.priority.name} priority") if display_priority %>
+                        <p class="truncate <%= ticket_team_css(issue) %>">
+                          <%= content_tag(:i, '', class: tracker_class(issue), title: tracker_title(issue)) if display_priority %>
                           <%= issue_id_and_subject_tag user, issue, display_shared_mark, display_initials %>
                         </p>
                       </td>

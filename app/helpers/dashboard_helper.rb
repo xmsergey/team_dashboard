@@ -56,6 +56,10 @@ module DashboardHelper
     priority_class + icon
   end
 
+  def tracker_title(issue)
+    "#{issue.tracker.name} (#{issue.priority.name} priority)"
+  end
+
   def module_class
     issues_in_card = TeamDashboardConstants::ISSUES_PER_CARD
     issues_in_card_six = TeamDashboardConstants::ISSUES_PER_CARD_6
@@ -74,12 +78,20 @@ module DashboardHelper
     params << "c[]=cf_#{owner_field.id}&c[]=fixed_version"
     params << "op[status_id]=*&op[cf_#{owner_field.id}]==&op[fixed_version_id]=#{target_version}"
     params << "f[]=status_id&f[]=cf_#{owner_field.id}&f[]=fixed_version_id&f[]="
+    params << "f[]=cf_#{@team_field.id}&op[cf_#{@team_field.id}]==&v[cf_#{@team_field.id}][]=#{@selected_team_value}" unless @show_ticket_different_teams
     params << "utf8=✓&v[cf_#{owner_field.id}][]=#{search_params}"
     URI.escape("/projects/plansource/issues?#{params.join('&')}")
   end
 
   def issue_id_and_subject_tag(user, issue, display_shared_mark, display_initials)
-    hint = css = link_css = ''
+    hint = css = link_css = nil
+
+    team_css = 'team'
+    issue_team = issue.team_value
+    if issue_team.blank?
+      team_css = "#{team_css} undefined"
+      issue_team = 'not assigned'
+    end
 
     options = {}
     options = options.merge(class: css.strip) unless css.blank?
@@ -88,6 +100,7 @@ module DashboardHelper
     ret_val = ''
     ret_val << content_tag(:span, 'S-', options) if display_shared_mark && issue.is_shared_with?(user)
     ret_val << content_tag(:span, issue.id, options)
+    ret_val << content_tag(:span, issue_team, class: team_css) if @show_ticket_different_teams
     ret_val << "\n"
     ret_val << link_to(issue.subject, issue_path(issue), title: issue.subject, class: link_css)
     ret_val.html_safe
@@ -116,13 +129,20 @@ module DashboardHelper
 
     issues =
       Issue.select('issues.*, ad.story_points, cv.value AS `external_priority`').visible
-        .joins("INNER JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue'")
+        .joins("JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue'")
         .joins("JOIN custom_fields cuf ON cuf.name = '#{TeamDashboardConstants::EXTERNAL_PRIORITY_FIELD_NAME}'")
         .joins('LEFT JOIN custom_values cv ON cv.customized_id = issues.id AND cv.custom_field_id = cuf.id')
         .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
         .where(fixed_version_id: @selected_version_id)
         .where('(cf.custom_field_id = ? AND cf.value = ?) OR (cf.custom_field_id = ? AND `cf`.value = ?)', owner_field.id, value, pm_field_instance.id, user.name)
         .order('issues.priority_id DESC')
+
+    unless @show_ticket_different_teams
+      issues = issues.joins("JOIN custom_fields cf_t ON cf_t.id = '#{@team_field.id}'")
+                     .joins("JOIN custom_values cv_t ON cv_t.customized_id = issues.id
+                                                    AND cv_t.custom_field_id = cf_t.id
+                                                    AND cv_t.value = '#{@selected_team_value}'")
+    end
 
     @ticket_status ? issues.open : issues
   end
@@ -260,6 +280,10 @@ module DashboardHelper
     attributes
   end
 
+  def ticket_team_css(issue)
+    issue.team_value == @selected_team_value ? 'current-team' : 'other-team'
+  end
+
   private
 
   def pm_field_instance
@@ -273,5 +297,4 @@ module DashboardHelper
       [owner_instance(user), owner_instance(user).eql?(@qa_owner_field) ? user.name.gsub(' ', '+') : user.id]
     end
   end
-
 end

@@ -10,3 +10,4 @@ en:
   label_filter: "Filter"
   label_team_management: "Teams Management"
   label_edit_teams: "Edit teams"
+  label_ticket_for_different_teams: "Show Tickets From Different Teams"

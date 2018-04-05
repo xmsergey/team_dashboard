@@ -27,6 +27,16 @@ module TeamDashboard
         issue_value_by_field_name(Setting.plugin_team_dashboard['qa_owner_field_name'])
       end
 
+      def team_field
+        issue_value_by_field_name(Setting.plugin_team_dashboard['team_field_name'])
+      end
+
+      def team_value
+        value = team_field.custom_field.cast_value(team_field.value).to_s if team_field.present?
+        yield value if block_given?
+        value
+      end
+
       def remaining_hours
         ret_val = nil
         custom_field_value = issue_value_by_field_name(TeamDashboardConstants::REMAINING_TIME_FIELD_NAME)

@@ -11,17 +11,21 @@ class DashboardController < ApplicationController
 
     @technical_owner_field = CustomField.where(name: Setting.plugin_team_dashboard['technical_owner_field_name']).first
     @qa_owner_field = CustomField.where(name: Setting.plugin_team_dashboard['qa_owner_field_name']).first
+    @team_field = CustomField.where(name: Setting.plugin_team_dashboard['team_field_name']).first
 
     @teams = TeamManagement.available_teams
     @selected_team = session_params(:team, @teams.keys.first)
+    @selected_team_value = @teams[@selected_team]
 
-    @versions = ((@project.shared_versions.sort || []) + @project.rolled_up_versions.visible).uniq
-    @selected_version_id = session_params(:target_version).present? ? session_params(:target_version).to_i : nil
+    @versions = project_versions(@project)
+    @selected_version_id = session_params(:target_version, @versions.first.id)
 
     @ticket_status = 'open' if session_params(:ticket_status) == 'open'
     @show_support_tickets = params[:show_support_tickets]
 
-    @users = User.in_team(@teams[@selected_team]).order([:firstname, :lastname])
+    @show_ticket_different_teams = session_params(:show_ticket_different_teams, '1').to_i == 1
+
+    @users = User.in_team(@selected_team_value).order([:firstname, :lastname])
 
     @max_issues_count = @users.count > 0 ? @users.max_by { |user| user.overview_map_issues.count }.overview_map_issues.count : 0
   end
@@ -98,6 +102,12 @@ class DashboardController < ApplicationController
   def find_project
     # @project variable must be set before calling the authorize filter
     @project = Project.find(params[:project_id])
+  end
+
+  def project_versions(project)
+    ((project.shared_versions.sort || []) + project.rolled_up_versions.visible).delete_if do |version|
+      version.closed? || version.completed?
+    end.uniq
   end
 
   def save_to_session(params_filter, force = false)

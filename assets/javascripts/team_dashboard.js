@@ -118,12 +118,12 @@ function disableFields() {
   if ($('#show_support_tickets')[0].checked){
     $('.support_disabled').each(function(){
       this.style.opacity = 0.6;
-      this.querySelector('select').disabled = true;
+      this.querySelector('select, input[type=checkbox]').disabled = true;
     });
   }else{
     $('.support_disabled').each(function(){
       this.style.opacity = 1;
-      this.querySelector('select').disabled = false;
+      this.querySelector('select, input[type=checkbox]').disabled = false;
     });
   }
 }

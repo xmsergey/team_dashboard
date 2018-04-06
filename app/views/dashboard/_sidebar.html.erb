@@ -1,42 +1,57 @@
 <%= form_tag({}) do %>
   <div class="filter-block">
+    <h3><%= l(:label_team_management)%></h3>
 
-  <h3><%= l(:label_team_management)%></h3>
-  <ul>
-    <li><%= link_to l(:label_edit_teams), team_management_path %></li>
-  </ul>
-  <h3><%= l(:label_filter)%></h3>
-  <ul>
-    <li>
-      <label for='show_support_tickets'><%= l(:label_show_support_tickets) %></label>
-      <%= check_box_tag 'show_support_tickets', @show_support_tickets, @show_support_tickets, onchange: 'disableFields();' %>
-    </li>
-    <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
-      <label for='show_ticket_all_teams'><%= l(:label_ticket_for_different_teams) %></label>
-      <%= hidden_field_tag 'show_ticket_different_teams', 0 %>
-      <%= check_box_tag 'show_ticket_different_teams', 1, @show_ticket_different_teams, disabled: @show_support_tickets %>
-    </li>
-    <li>
-      <label for='team'><%= l(:label_team) %></label><br />
-      <%= select_tag 'team', options_for_select(@teams.invert.to_a, @selected_team) %>
-    </li>
-    <% if false && @technical_owners.present? %>
+    <ul>
+      <li><%= link_to l(:label_edit_teams), team_management_path %></li>
+    </ul>
+
+    <h3><%= l(:label_filter)%></h3>
+
+    <ul>
       <li>
-        <label for='technical_owner'><%= l(:label_technical_owner) %></label><br />
-        <%= select_tag 'technical_owner', options_for_select(@technical_owners, @selected_technical_owner) %>
+        <label for='show_support_tickets'><%= l(:label_show_support_tickets) %></label>
+        <%= check_box_tag 'show_support_tickets', @show_support_tickets, @show_support_tickets, onchange: 'disableFields(this);' %>
       </li>
-    <% end %>
-    <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
-      <label for='target_version'><%= l(:label_target_version) %></label><br />
-      <%= select_tag 'target_version', version_options_for_select(@versions, @selected_version_id), disabled: @show_support_tickets %>
-    </li>
-    <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
-      <label for='ticket_status'><%= l(:label_ticket_status) %></label><br />
-      <%= select_tag 'ticket_status', options_for_select([['All', :all], ['Open', :open]], @ticket_status), disabled: @show_support_tickets %>
-    </li>
-  </ul>
-  <p>
-    <%= submit_tag l(:button_apply) %>
-  </p>
+      <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
+        <label for='show_ticket_all_teams'><%= l(:label_ticket_for_different_teams) %></label>
+        <%= hidden_field_tag 'show_ticket_different_teams', 0 %>
+        <%= check_box_tag 'show_ticket_different_teams', 1, @show_ticket_different_teams, disabled: @show_support_tickets %>
+      </li>
+      <li>
+        <label for='team'><%= l(:label_team) %></label><br />
+        <%= select_tag 'team', options_for_select(@teams.invert.to_a, @selected_team) %>
+      </li>
+      <% if false && @technical_owners.present? %>
+        <li>
+          <label for='technical_owner'><%= l(:label_technical_owner) %></label><br />
+          <%= select_tag 'technical_owner', options_for_select(@technical_owners, @selected_technical_owner) %>
+        </li>
+      <% end %>
+      <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
+        <label for='target_version'><%= l(:label_target_version) %></label><br />
+        <%= select_tag 'target_version', version_options_for_select(@versions, @selected_version_id), disabled: @show_support_tickets %>
+      </li>
+      <li class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if @show_support_tickets %>>
+        <label for='ticket_status'><%= l(:label_ticket_status) %></label><br />
+        <%= select_tag 'ticket_status', options_for_select([['All', :all], ['Open', :open]], @ticket_status), disabled: @show_support_tickets %>
+      </li>
+    </ul>
+
+    <p>
+      <%= submit_tag l(:button_apply) %>
+    </p>
+
+    <h3><%= l(:label_saved_configuration)%></h3>
+
+    <ul id="saved_configuration">
+      <% @configurations.each do |configuration| %>
+        <li>
+          <span><%= link_to '', url_for(controller: 'dashboard', action: 'edit_configuration', id: configuration.id), class: 'icon icon-edit', title: l(:label_button_edit) %></span>
+          <span><%= link_to '', url_for(controller: 'dashboard', action: 'remove_configuration', id: configuration.id), class: 'icon icon-del', title: l(:label_button_delete), data: { confirm: 'Are you sure?' } %></span>
+          <span><%= link_to truncate(configuration.configuration_name, length: 40), url_for(controller: 'dashboard', action: 'load_configuration', id: configuration.id), title: configuration.configuration_name, style: 'display: inline-block' %></span>
+        </li>
+      <% end %>
+    </ul>
   </div>
 <% end %>

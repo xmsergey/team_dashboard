@@ -1,5 +1,14 @@
 <% html_title l(:label_team_dashboard) %>
-<h2><%= l(:label_team_dashboard) %></h2>
+
+<div id="dashboard_header">
+  <div class="label_text">
+    <h2><%= l(:label_team_dashboard) %></h2>
+  </div>
+
+  <div class="new_link">
+    <%= link_to l(:label_button_new), url_for(controller: 'dashboard', action: 'new_configuration'), class: 'icon icon-add', title: l(:label_button_new) %>
+  </div>
+</div>
 
 <% content_for :sidebar do %>
   <%= render partial: 'sidebar' %>

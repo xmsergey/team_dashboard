@@ -1,0 +1,13 @@
+<% html_title @new_conf ? l(:label_button_new) : l(:label_edit_configuration) %>
+
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'team_dashboard', plugin: 'team_dashboard' %>
+  <%= javascript_include_tag 'team_dashboard', plugin: 'team_dashboard' %>
+<% end %>
+
+<h2><%= @new_conf ? l(:label_button_new) : l(:label_edit_configuration) %></h2>
+
+<%= form_tag(url_for(controller: 'dashboard', action: 'save_configuration'), id: "configuration-form") do %>
+  <%= render partial: 'form', locals: { configuration: @configuration, new_conf: @new_conf } %>
+  <%= submit_tag l(:button_save) %>
+<% end %>

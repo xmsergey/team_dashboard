@@ -114,8 +114,8 @@ function truncateIssuesNames() {
   });
 }
 
-function disableFields() {
-  if ($('#show_support_tickets')[0].checked){
+function disableFields(checkbox) {
+  if (checkbox.checked){
     $('.support_disabled').each(function(){
       this.style.opacity = 0.6;
       this.querySelector('select, input[type=checkbox]').disabled = true;

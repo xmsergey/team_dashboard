@@ -1,0 +1,39 @@
+<% config_params = configuration.try(:params) || {} %>
+
+<div class="box">
+  <div class="tabular">
+    <%= hidden_field_tag 'configuration[id]', configuration.try(:id) %>
+    <%= hidden_field_tag 'new_conf', new_conf %>
+
+    <p>
+      <label for='configuration_configuration_name'><%= l(:label_configuration_name) %></label>
+      <%= text_field_tag 'configuration[configuration_name]', configuration.try(:configuration_name), size: 40, maxlength: 80, required: true, placeholder: 'Enter configuration name...' %>
+    </p>
+
+    <p>
+      <label for='configuration_params_show_support_tickets'><%= l(:label_show_support_tickets) %></label>
+      <%= check_box_tag 'configuration[params[show_support_tickets]]', config_params[:show_support_tickets], config_params[:show_support_tickets], onchange: 'disableFields(this);' %>
+    </p>
+
+    <p>
+      <label for='configuration_params_show_ticket_all_teams'><%= l(:label_ticket_for_different_teams) %></label>
+      <%= hidden_field_tag 'configuration[params[show_ticket_different_teams]]', 0 %>
+      <%= check_box_tag 'configuration[params[show_ticket_different_teams]]', 1, config_params[:show_ticket_different_teams], disabled: config_params[:show_support_tickets] %>
+    </p>
+
+    <p>
+      <label for='configuration_params_team'><%= l(:label_team) %></label>
+      <%= select_tag 'configuration[params[team]]', options_for_select(@teams.invert.to_a, config_params[:team]), required: true %>
+    </p>
+
+    <p class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if config_params[:show_support_tickets] %>>
+      <label for='configuration_params_target_version'><%= l(:label_target_version) %></label>
+      <%= select_tag 'configuration[params[target_version]]', version_options_for_select(@versions, config_params[:target_version]), disabled: config_params[:show_support_tickets] %>
+    </p>
+
+    <p class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if config_params[:show_support_tickets] %>>
+      <label for='configuration_params_ticket_status'><%= l(:label_ticket_status) %></label>
+      <%= select_tag 'configuration[params[ticket_status]]', options_for_select([['All', :all], ['Open', :open]], config_params[:ticket_status]), disabled: config_params[:show_support_tickets] %>
+    </p>
+  </div>
+</div>

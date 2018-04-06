@@ -105,6 +105,11 @@
     .module-more {
         height: 170px;
     }
+
+    #saved_configuration a.icon {
+        width: 15px;
+        display: inline-block;
+    }
 }
 
 @media screen and (min-width: 900px)
@@ -278,3 +283,21 @@ span.points {
 }
 
 .width-15 { width: 15px; }
+
+#dashboard_header {
+  display: table;
+}
+
+#dashboard_header .label_text {
+  display: table-cell;
+  width: 90%;
+}
+
+#dashboard_header .new_link {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+#dashboard_header a {
+  margin-right: 3px;
+}

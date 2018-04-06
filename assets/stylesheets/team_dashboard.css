@@ -294,6 +294,7 @@ span.points {
 }
 
 #dashboard_header .new_link {
+  white-space: nowrap;
   display: table-cell;
   vertical-align: middle;
 }

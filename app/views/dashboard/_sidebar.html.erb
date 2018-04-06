@@ -42,7 +42,9 @@
       <%= submit_tag l(:button_apply) %>
     </p>
 
-    <h3><%= l(:label_saved_configuration)%></h3>
+    <% if @configurations.any? %>
+      <h3><%= l(:label_saved_configuration)%></h3>
+    <% end %>
 
     <ul id="saved_configuration">
       <% @configurations.each do |configuration| %>

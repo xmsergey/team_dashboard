@@ -43,7 +43,6 @@ module TeamDashboard
 
       def issues
         Issue.joins('join issue_statuses iss on iss.id = issues.status_id')
-            .where(['iss.is_closed = ?', false])
             .where(assigned_to_id: self.id)
             .order('priority_id desc, id asc')
       end

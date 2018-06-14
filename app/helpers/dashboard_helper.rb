@@ -123,6 +123,42 @@ module DashboardHelper
     end
   end
 
+  def team_points()
+    users_id = @users.collect { |u| u.id }
+    users_names = @users.collect { |u| u.name }
+
+    issues =
+      Issue.select('distinct issues.*, ad.story_points, cv.value AS `external_priority`').visible
+        .joins("JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue'")
+        .joins('LEFT JOIN custom_fields as ft on cf.custom_field_id = ft.id')
+        .joins("JOIN custom_fields cuf ON cuf.name = '#{TeamDashboardConstants::EXTERNAL_PRIORITY_FIELD_NAME}'")
+        .joins('LEFT JOIN custom_values cv ON cv.customized_id = issues.id AND cv.custom_field_id = cuf.id AND cv.customized_type = "Issue"')
+        .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
+        .where(fixed_version_id: @selected_version_id)
+        .where('(cf.custom_field_id = :qa_field_id AND IF (ft.field_format = "user", cf.value IN (:users_id),  cf.value IN (:users_name) ))'\
+          'OR (cf.custom_field_id = :technical_field_id AND IF (ft.field_format = "user", cf.value IN (:users_id),  cf.value IN (:users_name) ))'\
+          'OR (cf.custom_field_id = :pm_field_id AND IF (ft.field_format = "user", cf.value IN (:users_id),  cf.value IN (:users_name) ))',
+          {
+            qa_field_id: @qa_owner_field ? @qa_owner_field.id : '',
+            technical_field_id: @technical_owner_field.id,
+            pm_field_id: pm_field_instance.id,
+            users_name: users_names,
+            users_id: users_id
+          }
+        )
+
+    issues = issues.joins("JOIN custom_fields cf_t ON cf_t.id = '#{@team_field.id}'")
+                 .joins("JOIN custom_values cv_t ON cv_t.customized_id = issues.id
+                                                  AND cv_t.custom_field_id = cf_t.id
+                                                  AND cv_t.value = '#{@selected_team_value}'")
+
+    sums = Issue.from(@ticket_status ? issues.open : issues, :a)
+             .pluck('sum(a.story_points) as sp', 'sum(a.external_priority ) as ep').first
+    sums = sums.collect { |v| v.to_i}
+
+    { external_proirity: sums[1], story_points: sums[0] }
+  end
+
   def user_issues(user)
     owner_field = owner_instance(user)
     value = owner_field.field_format == 'user' ? user.id : user.name
@@ -131,7 +167,7 @@ module DashboardHelper
       Issue.select('issues.*, ad.story_points, cv.value AS `external_priority`').visible
         .joins("JOIN custom_values cf ON cf.customized_id = issues.id AND customized_type = 'Issue'")
         .joins("JOIN custom_fields cuf ON cuf.name = '#{TeamDashboardConstants::EXTERNAL_PRIORITY_FIELD_NAME}'")
-        .joins('LEFT JOIN custom_values cv ON cv.customized_id = issues.id AND cv.custom_field_id = cuf.id')
+        .joins('LEFT JOIN custom_values cv ON cv.customized_id = issues.id AND cv.custom_field_id = cuf.id AND cv.customized_type = "Issue"')
         .joins('LEFT JOIN agile_data ad ON ad.issue_id = issues.id')
         .where(fixed_version_id: @selected_version_id)
         .where('(cf.custom_field_id = ? AND cf.value = ?) OR (cf.custom_field_id = ? AND `cf`.value = ?)', owner_field.id, value, pm_field_instance.id, user.name)

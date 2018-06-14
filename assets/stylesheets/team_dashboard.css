@@ -302,3 +302,9 @@ span.points {
 #dashboard_header a {
   margin-right: 3px;
 }
+
+.team_points {
+    width: 230px;
+    margin: 10px;
+    color: rgb(41, 150, 204)
+}

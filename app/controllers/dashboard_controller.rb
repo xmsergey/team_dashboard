@@ -20,6 +20,8 @@ class DashboardController < ApplicationController
     @selected_team_value = @teams[@selected_team]
 
     @versions = project_versions(@project)
+    @current_version = current_version(@versions)
+
     @selected_version_id = session_params(:target_version, @versions.try(:first).try(:id))
 
     @ticket_status = 'open' if session_params(:ticket_status) == 'open'
@@ -205,4 +207,17 @@ class DashboardController < ApplicationController
       whitelisted[:params] = params[:configuration][:params]
     end
   end
+
+  def current_version(versions)
+    dates = {}
+    versions.select do |version|
+      version_date = version.name.match('\d+(-|\/)\d+(-|\/)\d+').to_s.gsub('-','/')
+      next if version_date.blank?
+
+      date = Date.strptime(version_date, '%Y/%m/%d') rescue nil || Date.strptime(version_date, '%m/%d/%Y') rescue nil
+      dates[date] = version if date && (date >= Date.today)
+    end
+    dates.sort.first[1]
+  end
+
 end

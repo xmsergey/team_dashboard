@@ -20,9 +20,7 @@ class DashboardController < ApplicationController
     @selected_team_value = @teams[@selected_team]
 
     @versions = project_versions(@project)
-    @current_version = current_version(@versions)
-
-    @selected_version_id = session_params(:target_version, @versions.try(:first).try(:id))
+    @selected_version_id = session_params(:target_version, current_version(@versions).id)
 
     @ticket_status = 'open' if session_params(:ticket_status) == 'open'
     @show_support_tickets = params[:show_support_tickets] || session_params(:show_support_tickets)

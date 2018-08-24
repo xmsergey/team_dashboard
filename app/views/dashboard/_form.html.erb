@@ -28,7 +28,7 @@
 
     <p class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if config_params[:show_support_tickets] %>>
       <label for='configuration_params_target_version'><%= l(:label_target_version) %></label>
-      <%= select_tag 'configuration[params[target_version]]', version_options_for_select(@versions, @current_version), disabled: config_params[:show_support_tickets] %>
+      <%= select_tag 'configuration[params[target_version]]', version_options_for_select(@versions, config_params[:target_version]), disabled: config_params[:show_support_tickets] %>
     </p>
 
     <p class="support_disabled" <%= 'style="opacity: 0.6;"'.html_safe if config_params[:show_support_tickets] %>>

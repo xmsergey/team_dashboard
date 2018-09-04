@@ -79,6 +79,7 @@ module DashboardHelper
     params << "op[status_id]=*&op[cf_#{owner_field.id}]==&op[fixed_version_id]=#{target_version}"
     params << "f[]=status_id&f[]=cf_#{owner_field.id}&f[]=fixed_version_id&f[]="
     params << "f[]=cf_#{@team_field.id}&op[cf_#{@team_field.id}]==&v[cf_#{@team_field.id}][]=#{@selected_team_value}" unless @show_ticket_different_teams
+    params << "c[]=story_points&c[]=cf_#{@external_priority_field.id}"
     params << "utf8=✓&v[cf_#{owner_field.id}][]=#{search_params}"
     URI.escape("/projects/plansource/issues?#{params.join('&')}")
   end

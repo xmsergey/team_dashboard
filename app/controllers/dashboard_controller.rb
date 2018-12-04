@@ -21,7 +21,7 @@ class DashboardController < ApplicationController
     @selected_team_value = @teams[@selected_team]
 
     @versions = project_versions(@project)
-    @selected_version_id = session_params(:target_version, current_version(@versions).id)
+    @selected_version_id = session_params(:target_version, current_version(@versions) && current_version(@versions).id)
 
     @ticket_status = 'open' if session_params(:ticket_status) == 'open'
     @show_support_tickets = params[:show_support_tickets] || session_params(:show_support_tickets)
@@ -149,7 +149,7 @@ class DashboardController < ApplicationController
       date = Date.strptime(version_date, '%Y/%m/%d') rescue nil || Date.strptime(version_date, '%m/%d/%Y') rescue nil
       dates[date] = version if date && (date >= Date.today)
     end
-    dates.sort.first[1]
+    dates.sort.first && dates.sort.first[1]
   end
 
 end

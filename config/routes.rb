@@ -9,9 +9,13 @@ scope '/projects/:project_id/team_dashboard' do
   post 'save_configuration', to: 'dashboard#save_configuration'
   get 'remove_configuration/:id', to: 'dashboard#remove_configuration'
   get 'load_configuration/:id', to: 'dashboard#load_configuration'
-  match 'upload_image', to: 'dashboard#upload_image', via: :post
-  match 'remove_image', to: 'dashboard#remove_image', via: :post
 
   get '/team_management', to: 'team_management#index'
   post 'team_management/update', to: 'team_management#update'
+
+  resources :user_files, path: '/:file_kind', only: [:show, :destroy], param: 'user_id' do
+    member do
+      post 'create'
+    end
+  end
 end

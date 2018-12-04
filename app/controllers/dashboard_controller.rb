@@ -109,74 +109,7 @@ class DashboardController < ApplicationController
     redirect_to action: 'index'
   end
 
-  def upload_image
-    user = User.find_by_id(params[:id])
-    image = params[:file].try(:tempfile)
-    return unless image
-
-    remove_image_for_user(user)
-
-    path = "#{get_dir_plugin_assets}/images/#{get_avatar_path(user)}"
-    path_assets_redmine = "#{get_dir_public_assets}/images/#{get_avatar_path(user)}"
-
-    File.open(path, 'wb') do |f|
-      f.write(image.read)
-    end
-    image.rewind
-    image.read
-
-    FileUtils.cp(path, path_assets_redmine)
-  end
-
-  def remove_image
-    user = User.find_by_id(params[:user_id])
-
-    remove_image_for_user(user)
-
-    render partial: 'dashboard/avatar', locals: { user: user }, layout: false if params[:clear_image]
-  end
-
   private
-
-  def remove_image_for_user(user)
-    plugin_assets = get_dir_plugin_assets
-    public_assets = get_dir_public_assets
-
-    path = "#{plugin_assets}/images/#{get_avatar_path(user, plugin_assets)}"
-    path_assets_redmine = "#{public_assets}/images/#{get_avatar_path(user, public_assets)}"
-
-    File.delete(path) if File.exist?(path)
-    File.delete(path_assets_redmine) if File.exist?(path_assets_redmine)
-  end
-
-  def get_dir_plugin_assets
-    Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).assets_directory
-  end
-
-  def get_dir_public_assets
-    Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME).public_directory
-  end
-
-  def get_avatar_path(user, assets_path = '')
-    path = "avatars/#{"#{user.firstname}_#{user.lastname}".downcase}"
-
-    extension = get_image_extension(assets_path, path) || '.jpg'
-
-    path + extension
-  end
-
-  def get_image_extension(assets_path, path)
-    extension = nil
-
-    TeamDashboardConstants::ALLOWED_IMAGE_EXTENSIONS.each do |ext|
-      if File.exist?("#{assets_path}/images/#{path + ext}")
-        extension = ext
-        break
-      end
-    end
-
-    extension
-  end
 
   def find_project
     # @project variable must be set before calling the authorize filter

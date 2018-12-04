@@ -1,16 +1,8 @@
 module DashboardHelper
-
   def get_avatar(user)
-    plugin = Redmine::Plugin.find(TeamDashboardConstants::PLUGIN_NAME) rescue nil
-    return nil unless plugin
-
-    path_to_avatar = "#{File.join(plugin.assets_directory, 'images/')}#{avatar_path(user, plugin.assets_directory)}"
-
-    if File.exist?(path_to_avatar)
-      avatar_path(user, plugin.assets_directory)
-    else
-      'avatars/default.png'
-    end
+    UserFile.fetch_user_file(user.id, UserFile::KIND_PHOTO) ?
+      "team_dashboard/photo/#{user.id}" :
+      "/plugin_assets/#{TeamDashboardConstants::PLUGIN_NAME}/images/avatars/user.png"
   end
 
   def avatar_path(user, assets_path)
